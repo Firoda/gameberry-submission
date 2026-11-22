@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>1010! Block Battle</title>
-<meta name="description" content="A PM case for Gameberry Labs: Block Battle, a 2-minute head-to-head mode for 1010! Block Puzzle that aims to lift DAU by 10%.">
+<meta name="description" content="A PM case for Gameberry Labs: Block Battle, a 3-minute head-to-head mode for 1010! Block Puzzle that aims to lift DAU by 10%.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
 <style>
@@ -409,7 +409,7 @@ body.flow .whyhere{flex-direction:column;align-items:flex-start}
       <tbody>
         <tr><td><span class="nm">Daily Board, made social</span>1010!'s daily puzzle, but the same for everyone and shareable</td><td class="c m">Med</td><td class="c y">High</td><td class="c y">Low</td><td class="c y">Low</td><td><span class="pill p-sky">Becomes the arena</span></td></tr>
         <tr><td><span class="nm">Streaks and leagues</span>Solo meta on top of play</td><td class="c n">Low</td><td class="c m">Med</td><td class="c y">Low</td><td class="c m">Med</td><td><span class="pill p-butter">Not now: reviews push back on meta</span></td></tr>
-        <tr class="win"><td><span class="nm">Block Battle</span>A 2-minute duel against a friend's run on today's board</td><td class="c y">High</td><td class="c m">Med</td><td class="c m">Med</td><td class="c m">Med</td><td><span class="pill p-mint">The bet</span></td></tr>
+        <tr class="win"><td><span class="nm">Block Battle</span>A 3-minute duel against a friend's run on today's board</td><td class="c y">High</td><td class="c m">Med</td><td class="c m">Med</td><td class="c m">Med</td><td><span class="pill p-mint">The bet</span></td></tr>
       </tbody>
     </table>
     <p class="small nxt"><b>Next:</b> live 1v1 with matchmaking and a bot fallback. <b>Later:</b> Battle Clubs, where revenue comes in. <b>Not doing:</b> ad changes (off the table); freeze fixes are a must-do, not a growth lever.</p>
@@ -427,12 +427,12 @@ body.flow .whyhere{flex-direction:column;align-items:flex-start}
         <ul class="clean">
           <li><b>Same 1010!</b>, on today's board. Clear 2+ lines at once and a junk row with one gap rises on your rival's board.</li>
           <li><b>The rival is a friend's recorded run</b>, so their clears hit you when they happened. No live servers needed.</li>
-          <li><b>2 minutes; top out and you lose.</b> Power-ups are off, so skill decides. Classic mode is untouched.</li>
+          <li><b>3 minutes; top out and you lose.</b> Power-ups are off, so skill decides. Classic mode is untouched.</li>
         </ul>
       </div>
       <div class="moment a" style="--i:4">
         <div class="wl">One player, one moment</div>
-        <p>Game over at 1,139. Next to "Revive": <b>"Kabir beat today's board. Battle his run?"</b> Two minutes later: <b>"You lost by one row. Revenge tomorrow?"</b></p>
+        <p>Game over at 1,139. Next to "Revive": <b>"Kabir beat today's board. Battle his run?"</b> Three minutes later: <b>"You lost by one row. Revenge tomorrow?"</b></p>
       </div>
       <p class="small a" style="--i:5"><b style="color:var(--ink)">Proof head-to-head works in free casual games:</b> Tetris Battle on Facebook; Match Masters (live 1v1 match-3).</p>
     </div>
@@ -504,28 +504,44 @@ body.flow .whyhere{flex-direction:column;align-items:flex-start}
   ['pointerdown','keydown','touchstart'].forEach(function(ev){addEventListener(ev,unlock,{passive:true})});
   sndBtn.onclick=function(e){ e.stopPropagation(); soundOn=!soundOn; sndBtn.setAttribute('aria-pressed',soundOn); sndBtn.textContent=soundOn?'Sound on':'Sound off'; if(soundOn){unlock();note(784,0,.05)} };
   function ok(){ return soundOn && ctx && ctx.state==='running' && !flow; }
-  function note(f,delay,vol){
-    if(!ok()) return; var t=ctx.currentTime+(delay||0);
-    var o=ctx.createOscillator(), g=ctx.createGain(); o.type='sine'; o.frequency.setValueAtTime(f,t);
-    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol||.045,t+.012); g.gain.exponentialRampToValueAtTime(.0001,t+.32);
-    o.connect(g).connect(ctx.destination); o.start(t); o.stop(t+.35);
+  function note(f,delay,vol,wave,len){
+    if(!ok()) return; var t=ctx.currentTime+(delay||0), L=len||.32;
+    var o=ctx.createOscillator(), g=ctx.createGain(); o.type=wave||'sine'; o.frequency.setValueAtTime(f,t);
+    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol||.045,t+.012); g.gain.exponentialRampToValueAtTime(.0001,t+L);
+    o.connect(g).connect(ctx.destination); o.start(t); o.stop(t+L+.03);
   }
-  function whoosh(){
-    if(!ok()) return; var t=ctx.currentTime, n=ctx.sampleRate*.45, buf=ctx.createBuffer(1,n,ctx.sampleRate), d=buf.getChannelData(0);
+  function sweep(f0,f1,len,vol,type,q){
+    if(!ok()) return; var t=ctx.currentTime, n=Math.floor(ctx.sampleRate*len), buf=ctx.createBuffer(1,n,ctx.sampleRate), d=buf.getChannelData(0);
     for(var k=0;k<n;k++) d[k]=(Math.random()*2-1)*(1-k/n);
     var src=ctx.createBufferSource(), bp=ctx.createBiquadFilter(), g=ctx.createGain(); src.buffer=buf;
-    bp.type='bandpass'; bp.Q.value=1.2; bp.frequency.setValueAtTime(500,t); bp.frequency.exponentialRampToValueAtTime(2200,t+.35);
-    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.07,t+.08); g.gain.exponentialRampToValueAtTime(.0001,t+.45);
+    bp.type=type||'bandpass'; bp.Q.value=q||1.2; bp.frequency.setValueAtTime(f0,t); bp.frequency.exponentialRampToValueAtTime(f1,t+len*.8);
+    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol||.07,t+.07); g.gain.exponentialRampToValueAtTime(.0001,t+len);
     src.connect(bp).connect(g).connect(ctx.destination); src.start(t);
   }
-  var SCALE=[523.25,587.33,659.25,783.99,880,1046.5];
+  /* one sound palette per slide: its own key, timbre and transition */
+  var PAL=[
+    {wave:'sine',     scale:[523.25,587.33,659.25,783.99,880,1046.5], sw:[500,2200,.45,'bandpass',1.2], chord:[523.25,659.25,783.99]},
+    {wave:'triangle', scale:[440,493.88,554.37,659.25,739.99,880],    sw:[300,1600,.5,'bandpass',.8],  chord:[440,554.37,659.25]},
+    {wave:'sine',     scale:[392,440,493.88,587.33,659.25,783.99],    sw:[1800,600,.55,'lowpass',2],   chord:[392,493.88,587.33,783.99], low:98},
+    {wave:'triangle', scale:[349.23,392,440,523.25,587.33,698.46],    sw:[700,3200,.4,'highpass',.7],  chord:[349.23,440,523.25,698.46], pluck:true},
+    {wave:'sine',     scale:[587.33,659.25,739.99,880,987.77,1174.66],sw:[400,2800,.6,'bandpass',1.5], chord:[587.33,739.99,880,1174.66], sparkle:true}
+  ];
+  function transit(i,back){
+    var P=PAL[i%PAL.length], w=P.sw;
+    if(back) sweep(w[1],w[0],w[2],.06,w[3],w[4]); else sweep(w[0],w[1],w[2],.07,w[3],w[4]);
+    var ch=back?P.chord.slice().reverse():P.chord;
+    ch.forEach(function(f,k){ note(f,.12+k*.06,.028,P.wave,.6); });
+    if(P.low) note(P.low,.05,.05,'sine',.5);
+    if(P.pluck) ch.forEach(function(f,k){ note(f*2,.3+k*.05,.018,'square',.12); });
+    if(P.sparkle) for(var k=0;k<6;k++) note(1800+Math.random()*1600,.35+k*.05,.015,'sine',.15);
+  }
   function reveal(sl){
     timers.forEach(clearTimeout); timers=[];
-    var seen={};
+    var P=PAL[slides.indexOf(sl)%PAL.length], seen={};
     [].forEach.call(sl.querySelectorAll('.a'),function(el){
       var i=parseInt(getComputedStyle(el).getPropertyValue('--i'))||0;
       if(seen[i]) return; seen[i]=1;
-      timers.push(setTimeout(function(){note(SCALE[i%SCALE.length],0,.04)}, i*260+180));
+      timers.push(setTimeout(function(){ note(P.scale[i%P.scale.length],0,.04,P.wave); if(P.pluck) note(P.scale[i%P.scale.length]*2,.02,.012,'square',.1); }, i*260+180));
     });
   }
   var names=slides.map(function(s){return s.id});
@@ -546,10 +562,10 @@ body.flow .whyhere{flex-direction:column;align-items:flex-start}
     if(flow) { slides[i].scrollIntoView({behavior:'smooth'}); return; }
     i=Math.max(0,Math.min(slides.length-1,i));
     if(i===cur) return;
-    cur=i;
+    var back=i<cur; cur=i;
     slides.forEach(function(s,j){s.classList.toggle('on',j===i);s.classList.toggle('before',j<i)});
     [].forEach.call(nav.children,function(b,j){b.classList.toggle('on',j===i)});
-    if(!first) whoosh(); first=false;
+    if(!first) transit(i,back); first=false;
     reveal(slides[i]);
     try{history.replaceState(null,'','#'+names[i])}catch(e){}
   }
