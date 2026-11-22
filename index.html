@@ -1,603 +1,474 @@
 <!doctype html>
 <html lang="en">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Study Jodi Walkthrough</title>
-<meta name="claude:viewport-fit-sides" content="cover">
+<title>1010! Block Battle</title>
+<meta name="description" content="A PM case for Gameberry Labs: Block Battle, a 2-minute head-to-head mode for 1010! Block Puzzle that aims to lift DAU by 10%.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
-<script>
-  (function () {
-    var r = document.documentElement;
-    r.classList.add('js');
-    try { if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) r.classList.add('rm'); } catch (e) {}
-  })();
-</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
 <style>
-/* Layout: one scene at a time on a white stage. Each scroll, swipe or key press reveals the next thing;
-   after a scene's last step, the next scroll moves to the next scene. Single light theme by choice. */
-:root {
-  --bg: #FFFFFF;
-  --soft: #F7F9FB;
-  --ink: #243041;
-  --body: #4A5565;
-  --muted: #8A94A3;
-  --line: #ECEFF3;
-  --mint: #E4F6EF;
-  --mint-ink: #2F8F78;
-  --mint-mid: #9EDCC8;
-  --peach: #FFEDE5;
-  --peach-ink: #D46F58;
-  --butter: #FFF5D8;
-  --butter-ink: #A87C0C;
-  --butter-mid: #F5CD62;
-  --lilac: #EFECFB;
-  --lilac-ink: #6A5DC2;
-  --sky: #E7F1FB;
-  --sky-ink: #3A78B0;
-  --white: #FFFFFF;
-  --shadow: 0 1px 2px rgba(36, 48, 65, .04), 0 8px 24px rgba(36, 48, 65, .06);
-  --ease: cubic-bezier(.22, 1, .36, 1);
-  --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --bar: 58px;
-  color-scheme: light;
+:root{
+  --bg:#FFFFFF; --paper:#F7F8FB; --ink:#243041; --ink2:#5B6676; --ink3:#8A93A1; --line:#E8ECF2;
+  --mint:#5DCAA5; --mint-bg:#E4F6EF; --mint-ink:#1E7A62;
+  --peach:#F59E7E; --peach-bg:#FDEDE6; --peach-ink:#A8482A;
+  --butter:#F4C95D; --butter-bg:#FDF5DC; --butter-ink:#8A6512;
+  --lilac:#A79BE8; --lilac-bg:#EFECFC; --lilac-ink:#5847B8;
+  --sky:#6FB2EA; --sky-bg:#E6F1FB; --sky-ink:#22679F;
+  --pink:#EE8FB0; --junk:#A3A9B3;
+  --head:"Space Grotesk",Inter,system-ui,sans-serif;
+  --body:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:light;
 }
-*, *::before, *::after { box-sizing: border-box; }
-[hidden] { display: none !important; }
-html, body { height: 100%; }
-body { margin: 0; background: var(--bg); color: var(--body); font-family: var(--font); font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; overflow: hidden; }
-body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 60; background: var(--bg); }
-button { font: inherit; color: inherit; }
-a { color: var(--mint-ink); }
-:focus-visible { outline: 2px solid var(--mint-ink); outline-offset: 3px; border-radius: 8px; }
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased}
+body{overflow:hidden}
+a{color:inherit}
 
-/* ---------------- top bar */
-.topbar { position: fixed; top: env(safe-area-inset-top, 0px); left: 0; right: 0; z-index: 50; height: var(--bar); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px;
-  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); background: var(--bg); }
-.brand { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; color: var(--ink); white-space: nowrap; }
-.pair { display: inline-flex; }
-.pair span { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 700; border: 2px solid var(--white); }
-.pair span:first-child { background: var(--peach); color: var(--peach-ink); }
-.pair span:last-child { background: var(--lilac); color: var(--lilac-ink); margin-left: -7px; }
-.dots { display: flex; gap: 2px; }
-.dot { width: 22px; height: 30px; padding: 0; border: 0; background: none; cursor: pointer; display: grid; place-items: center; }
-.dot span { width: 7px; height: 7px; border-radius: 99px; background: var(--line); transition: width .5s var(--ease), background-color .4s; }
-.dot[aria-current="step"] span { width: 20px; background: var(--mint-mid); }
-.dot:disabled { cursor: default; }
-.right { display: flex; justify-content: flex-end; align-items: center; gap: 8px; }
-.icon-btn { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line); background: var(--white); cursor: pointer; display: grid; place-items: center; color: var(--muted); }
-.icon-btn svg { width: 17px; height: 17px; }
-.icon-btn .on { display: none; }
-.icon-btn.is-on { color: var(--mint-ink); background: var(--mint); border-color: var(--mint); }
-.icon-btn.is-on .on { display: block; }
-.icon-btn.is-on .off { display: none; }
-.model-link { height: 34px; padding: 0 14px; border-radius: 99px; display: inline-flex; align-items: center; font-size: 13.5px; font-weight: 600; text-decoration: none; color: var(--mint-ink); background: var(--mint); white-space: nowrap; }
-.progress { position: fixed; top: calc(env(safe-area-inset-top, 0px) + var(--bar)); left: 0; right: 0; height: 2px; z-index: 50; background: var(--line); }
-.progress i { display: block; height: 100%; width: 0; background: var(--mint-mid); transition: width .8s var(--ease); }
+/* ---------- stage (desktop): fixed 1280x720 slides, scaled to fit ---------- */
+.deck{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--paper)}
+.stage{width:1280px;height:720px;position:relative;flex:0 0 auto;transform-origin:center center}
+.slide{position:absolute;inset:0;background:var(--bg);border-radius:18px;box-shadow:0 10px 40px rgba(36,48,65,.08);
+  padding:48px 64px 40px;display:flex;flex-direction:column;gap:20px;overflow:hidden;
+  opacity:0;visibility:hidden;transition:opacity .45s ease,visibility 0s linear .45s}
+.slide.on{opacity:1;visibility:visible;transition:opacity .45s ease}
 
-/* ---------------- stage and scenes */
-.stage { position: fixed; left: 0; right: 0; top: calc(env(safe-area-inset-top, 0px) + var(--bar)); bottom: env(safe-area-inset-bottom, 0px); overflow: hidden; touch-action: none; }
-.scene { position: absolute; inset: 0; display: flex; align-items: safe center; opacity: 0; visibility: hidden; transform: translateY(32px);
-  transition: opacity .5s var(--ease), transform .6s var(--ease), visibility 0s linear .5s; }
-.scene.above { transform: translateY(-32px); }
-.scene.on { opacity: 1; visibility: visible; transform: none; transition: opacity .55s var(--ease) .08s, transform .65s var(--ease) .08s, visibility 0s; }
-.inner { width: 100%; max-width: 1040px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 16px 64px; }
-@media (min-width: 900px) { .inner { padding-left: max(56px, env(safe-area-inset-left, 0px)); padding-right: max(56px, env(safe-area-inset-right, 0px)); } }
-.kicker { display: inline-block; margin: 0 0 14px; padding: 4px 12px; border-radius: 99px; font-size: 13px; font-weight: 600; background: var(--mint); color: var(--mint-ink); }
-.title { margin: 0; max-width: 820px; color: var(--ink); font-weight: 650; letter-spacing: -.02em; font-size: clamp(26px, calc(1.8vw + 14px), 40px); line-height: 1.18; text-wrap: balance; }
-.pic { margin-top: clamp(24px, 5vh, 44px); }
+/* autoplay: elements with .a appear in order when their slide is on */
+.a{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s cubic-bezier(.2,.7,.2,1);transition-delay:calc(var(--i,0) * 260ms + 150ms)}
+.slide.on .a{opacity:1;transform:none}
+.bar i{transform:scaleX(0);transform-origin:left;transition:transform .9s cubic-bezier(.2,.7,.2,1);transition-delay:calc(var(--i,0) * 260ms + 450ms)}
+.slide.on .bar i{transform:scaleX(1)}
 
-/* revealed one step at a time */
-[data-step], [data-only] { opacity: 0; transform: translateY(10px); transition: opacity .45s var(--ease), transform .5s var(--ease); }
-[data-step].in, [data-only].in { opacity: 1; transform: none; transition-delay: var(--d, 0s); }
-.line { margin: 26px 0 0; font-size: clamp(18px, 1.6vw, 22px); font-weight: 600; color: var(--ink); }
-.line b { color: var(--mint-ink); font-weight: 650; }
-.note { margin: 14px 0 0; font-size: 13px; color: var(--muted); }
+/* ---------- type ---------- */
+.kick{font:600 12px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);display:flex;gap:10px;align-items:center}
+.kick b{display:inline-flex;width:22px;height:22px;border-radius:6px;align-items:center;justify-content:center;color:#fff;font-size:12px;letter-spacing:0}
+h1,h2,h3{font-family:var(--head);margin:0;letter-spacing:-.02em;text-wrap:balance}
+h2{font-size:33px;line-height:1.12;font-weight:600;max-width:1100px}
+h3{font-size:15px;font-weight:600;letter-spacing:-.005em;margin-bottom:8px}
+p{margin:0}
+.lead{font-size:16px;line-height:1.5;color:var(--ink2)}
+.small{font-size:12.5px;line-height:1.45;color:var(--ink2)}
+.tiny{font-size:11px;line-height:1.4;color:var(--ink3)}
+.hl{background:linear-gradient(transparent 58%,var(--butter-bg) 58%);padding:0 2px}
+.card{background:var(--paper);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;padding:4px 9px;border-radius:999px}
+.p-mint{background:var(--mint-bg);color:var(--mint-ink)} .p-peach{background:var(--peach-bg);color:var(--peach-ink)}
+.p-butter{background:var(--butter-bg);color:var(--butter-ink)} .p-lilac{background:var(--lilac-bg);color:var(--lilac-ink)} .p-sky{background:var(--sky-bg);color:var(--sky-ink)}
+.foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--ink3)}
+.foot .src{max-width:960px}
+.btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font:600 14px var(--body);padding:11px 16px;border-radius:12px;background:var(--ink);color:#fff}
+.btn.alt{background:#fff;color:var(--ink);border:1px solid var(--line)}
+ul.clean{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+ul.clean li{font-size:13px;line-height:1.45;color:var(--ink2);padding-left:14px;position:relative}
+ul.clean li::before{content:"";position:absolute;left:0;top:.55em;width:6px;height:6px;border-radius:2px;background:var(--mint)}
+ul.clean li b{color:var(--ink);font-weight:600}
 
-/* ---------------- 0 · cover */
-.cover { text-align: center; }
-.cover .pair { justify-content: center; margin-bottom: 22px; }
-.cover .pair span { width: 64px; height: 64px; font-size: 26px; border-width: 4px; }
-.cover .pair span:last-child { margin-left: -16px; }
-.cover h1 { margin: 0; font-size: clamp(40px, 6vw, 68px); font-weight: 700; letter-spacing: -.035em; color: var(--ink); line-height: 1.05; }
-.cover p { margin: 14px auto 0; max-width: 520px; font-size: clamp(17px, 1.6vw, 20px); color: var(--body); }
-.cover .eyebrow { margin: 0 auto 18px; font-size: 13px; font-weight: 600; color: var(--muted); letter-spacing: .02em; }
-.cover .how { margin: 26px auto 0; font-size: 13px; color: var(--muted); }
-.go { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 34px; }
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 50px; padding: 0 26px; border-radius: 99px; border: 0; font-size: 16px; font-weight: 600; cursor: pointer; text-decoration: none; transition: background-color .25s, transform .3s var(--ease); }
-.btn:hover { transform: translateY(-1px); }
-.btn-main { background: var(--mint-ink); color: var(--white); }
-.btn-soft { background: var(--mint); color: var(--mint-ink); }
-.btn-text { height: auto; padding: 6px 10px; background: none; color: var(--muted); font-size: 14px; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; }
-.how { margin-top: 26px; font-size: 13px; color: var(--muted); }
+/* block motif */
+.blocks{display:grid;grid-template-columns:repeat(4,14px);gap:3px}
+.blocks i{width:14px;height:14px;border-radius:3px;display:block}
 
-/* ---------------- 1 · Riya's week */
-.week-wrap { display: flex; flex-wrap: wrap; gap: 14px; align-items: stretch; }
-.behind { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 14px 20px; border-radius: 18px; background: var(--soft); }
-.behind small { font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
-.num { font-size: 44px; font-weight: 700; line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; transition: color .6s; }
-.num.bump { animation: bump .35s var(--ease); }
-@keyframes bump { 50% { transform: scale(1.15); } }
-.s1.late .num { color: var(--peach-ink); }
-.week { display: grid; grid-template-columns: repeat(5, 96px); gap: 10px; }
-.day { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 16px 8px; border-radius: 18px; border: 1.5px dashed var(--line); background: var(--white); transition: background-color .45s var(--ease), border-color .45s var(--ease); }
-.day[data-step] { opacity: 1; transform: none; }
-.day b { font-size: 13px; font-weight: 600; color: var(--muted); }
-.day i { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: 18px; font-weight: 700; color: transparent; background: var(--soft); transition: background-color .4s var(--ease), color .4s var(--ease), transform .4s var(--ease); }
-.day.ok.in { background: var(--mint); border-color: transparent; transition-delay: var(--d, 0s); }
-.day.ok.in i { background: var(--white); color: var(--mint-ink); transform: scale(1.05); transition-delay: var(--d, 0s); }
-.day.miss.in { background: var(--peach); border-color: transparent; transition-delay: var(--d, 0s); }
-.day.miss.in i { background: var(--white); color: var(--peach-ink); transition-delay: var(--d, 0s); }
+/* ---------- slide 0 ---------- */
+.s0{flex-direction:row;gap:56px;align-items:center;padding:56px 72px}
+.s0 .left{flex:1;display:flex;flex-direction:column;gap:22px;min-width:0}
+.s0 h1{font-size:68px;line-height:1;font-weight:700;letter-spacing:-.04em}
+.s0 h1 span{color:var(--mint)}
+.s0 .cheek{font-size:21px;line-height:1.45;color:var(--ink);max-width:600px}
+.s0 .cheek em{font-style:normal;color:var(--peach-ink)}
+.who{display:flex;flex-direction:column;gap:3px;font-size:14px;color:var(--ink2)}
+.who b{color:var(--ink);font-size:16px}
+.phone{flex:0 0 auto;width:300px;border-radius:38px;background:#fff;padding:12px;box-shadow:0 0 0 1px var(--line),0 24px 60px rgba(36,48,65,.12);position:relative}
+.phone img{display:block;width:100%;border-radius:28px}
+.phone .tag{position:absolute;left:50%;bottom:-14px;transform:translateX(-50%);white-space:nowrap}
+.vs{position:absolute;right:-26px;top:38px;transform:rotate(8deg)}
+.hint{position:absolute;left:72px;bottom:28px;font-size:12px;color:var(--ink3);display:flex;gap:8px;align-items:center}
+.hint kbd{font:600 11px var(--body);border:1px solid var(--line);border-radius:6px;padding:2px 6px;color:var(--ink2)}
 
-/* ---------------- 2 · bars */
-.bars { display: grid; gap: 18px; max-width: 760px; }
-.bar { display: grid; grid-template-columns: 250px minmax(0, 1fr) 84px; gap: 16px; align-items: center; }
-.bar span { font-size: 15.5px; font-weight: 500; color: var(--ink); }
-.track { height: 34px; border-radius: 10px; background: var(--soft); overflow: hidden; }
-.fill { display: block; height: 100%; width: 0; border-radius: 10px; transition: width .9s var(--ease) .1s; }
-.bar.in .fill { width: var(--w); }
-.bar.a .fill { background: var(--mint-mid); }
-.bar.b .fill { background: var(--lilac); }
-.bar output { font-size: 24px; font-weight: 700; color: var(--ink); text-align: right; font-variant-numeric: tabular-nums; }
-.bar.b output { color: var(--lilac-ink); }
+/* ---------- slide 1 ---------- */
+.g3{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:16px;flex:1;min-height:0}
+.big{font:700 34px/1 var(--head);letter-spacing:-.03em}
+.statrow{display:flex;flex-direction:column;gap:12px}
+.stat{display:flex;gap:12px;align-items:baseline}
+.stat .big{min-width:64px;font-size:22px}
+.stat span{font-size:12.5px;line-height:1.4;color:var(--ink2)}
+.strip{border-radius:10px;width:76%;display:block;margin:0 auto}
+.steps3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;text-align:center;width:76%;margin:0 auto}
+.steps3 span{font-size:11px;color:var(--ink2);line-height:1.3}
+.bars{display:flex;flex-direction:column;gap:8px}
+.bar{display:grid;grid-template-columns:132px 1fr 34px;gap:8px;align-items:center;font-size:12px;color:var(--ink2)}
+.bar .t{height:14px;background:#fff;border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--peach);border-radius:0 4px 4px 0}
+.bar i.cool{background:var(--sky)}
+.bar b{color:var(--ink);font-variant-numeric:tabular-nums;text-align:right}
+.lever{display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:16px;align-items:center;background:var(--mint-bg);border-radius:14px;padding:14px 20px}
+.lever .lbl{font:600 15px var(--head);color:var(--mint-ink);max-width:210px;line-height:1.25}
+.lever .n{display:flex;gap:10px;align-items:baseline}
+.lever .n .big{color:var(--mint-ink);font-size:30px}
+.lever .n span{font-size:12.5px;color:var(--ink2);line-height:1.35}
 
-/* ---------------- 3 · evidence */
-.cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-.card { padding: 22px 20px; border-radius: 20px; display: flex; flex-direction: column; gap: 8px; min-height: 180px; }
-.card.c1 { background: var(--peach); } .card.c2 { background: var(--lilac); } .card.c3 { background: var(--sky); }
-.card strong { font-size: clamp(26px, 2.6vw, 34px); font-weight: 700; letter-spacing: -.02em; color: var(--ink); line-height: 1.1; }
-.card p { margin: 0; font-size: 15.5px; color: var(--body); }
-.card small { margin-top: auto; font-size: 12.5px; color: var(--muted); }
+/* ---------- slide 2 ---------- */
+.g2{display:grid;grid-template-columns:400px 1fr;gap:20px;flex:1;min-height:0}
+.seg{display:flex;flex-direction:column;gap:8px}
+.segrow{background:var(--paper);border-radius:12px;padding:11px 14px;display:flex;flex-direction:column;gap:3px;border:1.5px solid transparent}
+.segrow.t{border-color:var(--mint);background:#fff}
+.segrow .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.segrow b{font-size:14px}
+.segrow span{font-size:12px;line-height:1.4;color:var(--ink2)}
+.truth{background:var(--butter-bg);border-radius:12px;padding:12px 14px;font-size:13.5px;line-height:1.45}
+.truth b{display:block;font:600 11px var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--butter-ink);margin-bottom:4px}
+table.opts{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px}
+table.opts th{font:600 11px var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);text-align:center;padding:0 6px 8px;vertical-align:bottom}
+table.opts th:first-child,table.opts th:nth-child(2){text-align:left}
+table.opts td{padding:6px 6px;border-top:1px solid var(--line);vertical-align:middle;color:var(--ink2);line-height:1.35}
+table.opts td.c{text-align:center;font-size:15px}
+table.opts td .nm{color:var(--ink);font-weight:600;font-size:13px;display:block}
+table.opts tr.win td{background:var(--mint-bg)}
+table.opts tr.win td:first-child{border-radius:10px 0 0 10px}
+table.opts tr.win td:last-child{border-radius:0 10px 10px 0}
+table.opts tr.win + tr td{border-top-color:transparent}
+.lens{font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.y{color:var(--mint-ink)} .m{color:var(--butter-ink)} .n{color:var(--ink3)}
+.verdict{font-size:12px;color:var(--ink);font-weight:600}
 
-/* ---------------- 4 · options */
-.opts { display: grid; gap: 8px; max-width: 840px; }
-.opt { display: grid; grid-template-columns: minmax(0, 1fr) repeat(3, 120px); gap: 10px; align-items: center; padding: 12px 16px; border-radius: 14px; background: var(--soft); }
-.opt.head { background: none; padding-block: 0 2px; font-size: 12.5px; font-weight: 600; color: var(--muted); }
-.opt.head span:not(:first-child) { text-align: center; }
-.opt > span:first-child { font-weight: 600; color: var(--ink); font-size: 15.5px; }
-.opt.win.in { background: var(--mint); }
-.opt.win.in > span:first-child { color: var(--mint-ink); }
-.mk { justify-self: center; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-size: 13px; font-weight: 700; }
-.mk.y { background: var(--white); color: var(--mint-ink); box-shadow: inset 0 0 0 1.5px var(--mint-mid); }
-.mk.p { background: var(--butter); color: var(--butter-ink); }
-.mk.n { background: var(--peach); color: var(--peach-ink); }
+/* ---------- slide 3 ---------- */
+.g3b{display:grid;grid-template-columns:640px 1fr;gap:28px;flex:1;min-height:0}
+.gifbox{position:relative;border-radius:16px;overflow:hidden;box-shadow:0 0 0 1px var(--line);background:#fff}
+.gifbox img{display:block;width:100%}
+.gifbox .btn{position:absolute;right:14px;bottom:14px;padding:9px 13px;font-size:13px}
+.rules{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.rules div{background:var(--paper);border-radius:10px;padding:9px 10px;font-size:12px;line-height:1.35;color:var(--ink2)}
+.rules b{display:block;color:var(--ink);font-size:13px;margin-bottom:2px}
+.col{display:flex;flex-direction:column;gap:14px;min-width:0}
+.path{display:flex;flex-direction:column;gap:0}
+.path div{display:grid;grid-template-columns:28px 1fr;gap:10px;padding:7px 0;position:relative}
+.path em{font:700 12px var(--body);font-style:normal;width:24px;height:24px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--lilac-bg);color:var(--lilac-ink)}
+.path p{font-size:12.5px;line-height:1.4;color:var(--ink2)}
+.path p b{color:var(--ink)}
+.gb{background:var(--sky-bg);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.gb h3{color:var(--sky-ink);margin:0}
+.gb p{font-size:12.5px;line-height:1.45;color:var(--ink)}
 
-/* ---------------- 5 · Study Jodi */
-.s5 .title { max-width: none; }
-.jodi { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(28px, 6vw, 80px); align-items: center; }
-.phone { position: relative; height: min(540px, calc(100dvh - var(--bar) - 300px)); aspect-ratio: 600 / 1310; max-width: 100%; border-radius: 34px; border: 7px solid #E9ECF1; background: #E9ECF1; overflow: hidden; box-shadow: var(--shadow); }
-.phone img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: translateY(24px); transition: opacity .5s var(--ease), transform .55s var(--ease); }
-.phone img.on { opacity: 1; transform: none; }
-.phone img.gone { transform: translateY(-24px); }
-.hl { position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h); border: 3px solid var(--butter-mid); border-radius: 12px; box-shadow: 0 0 0 6px rgba(245, 205, 98, .28); opacity: 0; transition: opacity .35s var(--ease); pointer-events: none; }
-.hl.show { opacity: 1; }
-.caps { position: relative; min-height: 220px; max-width: 440px; }
-.cap { position: absolute; inset: 0 0 auto 0; }
-.cap .n { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; background: var(--butter); color: var(--butter-ink); margin-bottom: 14px; }
-.cap h3 { margin: 0 0 8px; font-size: clamp(22px, 2.2vw, 28px); font-weight: 650; letter-spacing: -.015em; color: var(--ink); line-height: 1.2; }
-.cap p { margin: 0; font-size: 17px; color: var(--body); }
-.cap .from { display: inline-block; margin-top: 16px; padding: 5px 12px; border-radius: 99px; background: var(--lilac); color: var(--lilac-ink); font-size: 13px; font-weight: 600; }
-.cap.hint p { color: var(--muted); }
-.pips { display: flex; gap: 6px; margin-top: 18px; }
-.pips i { width: 8px; height: 8px; border-radius: 99px; background: var(--line); transition: width .5s var(--ease), background-color .4s; }
-.pips i.on { width: 22px; background: var(--butter-mid); }
+/* ---------- slide 4 ---------- */
+.g4{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:16px;flex:1;min-height:0}
+.scen{display:flex;flex-direction:column;gap:12px}
+.sc{display:grid;grid-template-columns:52px 1fr;gap:10px;align-items:center}
+.sc span{font-size:12px;color:var(--ink2);font-weight:600}
+.sc .t{height:34px;position:relative;background:#fff;border-radius:6px}
+.sc .t i{position:absolute;left:0;top:0;bottom:0;border-radius:0 6px 6px 0;background:var(--mint);transform:scaleX(0);transform-origin:left;transition:transform .9s cubic-bezier(.2,.7,.2,1);transition-delay:calc(var(--i,0) * 260ms + 450ms)}
+.slide.on .sc .t i{transform:scaleX(1)}
+.sc .t b{position:absolute;top:50%;transform:translateY(-50%);font:700 15px var(--head);color:var(--ink);white-space:nowrap}
+.sc.base .t i{background:var(--mint-ink)}
+.target{position:absolute;top:-6px;bottom:-6px;width:0;border-left:1.5px dashed var(--peach-ink)}
+.target small{position:absolute;top:-16px;left:-22px;font-size:10px;color:var(--peach-ink);font-weight:600;white-space:nowrap}
+.stack{display:flex;height:16px;border-radius:5px;overflow:hidden;gap:2px;margin-top:2px}
+.stack i{display:block;height:100%}
+.leg{display:flex;flex-direction:column;gap:4px}
+.leg div{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--ink2)}
+.leg div b{color:var(--ink);font-variant-numeric:tabular-nums;margin-left:auto}
+.leg i{width:10px;height:10px;border-radius:3px;flex:0 0 10px}
+table.as{width:100%;border-collapse:collapse;font-size:12px}
+table.as td{padding:6px 0;border-top:1px solid var(--line);color:var(--ink2);vertical-align:top;line-height:1.35}
+table.as td:nth-child(2){color:var(--ink);font-weight:600;text-align:right;white-space:nowrap;padding-left:8px}
+table.as tr:first-child td{border-top:0}
+.typ{font-size:10px;font-weight:600;padding:1px 6px;border-radius:999px;margin-left:4px;white-space:nowrap}
+.links{display:flex;gap:10px;flex-wrap:wrap}
 
-/* ---------------- 6 · impact */
-.tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; max-width: 860px; }
-.tile { padding: 18px 20px; border-radius: 18px; background: var(--soft); display: grid; gap: 2px; }
-.tile.base { background: var(--mint); }
-.tile small { font-size: 13px; font-weight: 600; color: var(--muted); }
-.tile output { font-size: clamp(30px, 3.4vw, 44px); font-weight: 700; letter-spacing: -.03em; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.1; }
-.tile.base output { color: var(--mint-ink); }
-.tile span { font-size: 14px; color: var(--body); }
-.split { margin-top: 18px; max-width: 860px; }
-.stack { display: flex; gap: 3px; height: 14px; }
-.stack i { display: block; width: 0; border-radius: 99px; transition: width .7s var(--ease); }
-.split.in .stack i { width: var(--w); }
-.split.in .stack i:nth-child(2) { transition-delay: .18s; } .split.in .stack i:nth-child(3) { transition-delay: .36s; }
-.legend { display: flex; flex-wrap: wrap; gap: 6px 20px; margin-top: 10px; font-size: 14px; color: var(--body); }
-.legend span { display: inline-flex; align-items: center; gap: 7px; }
-.legend em { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-.legend b { color: var(--ink); font-variant-numeric: tabular-nums; }
-.k1 { background: var(--mint-mid); } .k2 { background: var(--sky-ink); opacity: .45; } .k3 { background: var(--butter-mid); }
-.test { margin-top: 18px; display: flex; flex-wrap: wrap; align-items: center; gap: 14px 18px; max-width: 860px; padding: 14px 18px; border-radius: 16px; background: var(--butter); }
-.ppl { display: flex; gap: 5px; }
-.ppl i { width: 14px; height: 14px; border-radius: 50%; background: var(--mint-mid); }
-.ppl i.c { background: var(--white); box-shadow: inset 0 0 0 1.5px var(--butter-mid); }
-.test p { margin: 0; font-size: 15.5px; color: var(--ink); }
-.end { margin-top: 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+/* ---------- nav ---------- */
+.nav{position:fixed;right:max(18px,env(safe-area-inset-right,0px));top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:10}
+.nav button{width:10px;height:10px;border-radius:50%;border:0;padding:0;background:#D5DBE4;cursor:pointer;transition:transform .2s,background .2s}
+.nav button.on{background:var(--ink);transform:scale(1.3)}
+.print-only{display:none!important}
 
-/* ---------------- scroll hint and pager */
-.hint-down { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 40; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 12px; color: var(--muted); transition: opacity .6s; pointer-events: none; }
-.hint-down svg { width: 18px; height: 18px; animation: bob 2.6s ease-in-out infinite; }
-@keyframes bob { 50% { transform: translateY(4px); } }
-.hint-down.off { opacity: 0; }
-.pager { position: fixed; right: calc(18px + env(safe-area-inset-right, 0px)); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); z-index: 40; display: flex; flex-direction: column; gap: 8px; }
-.pager button { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: var(--white); color: var(--body); cursor: pointer; display: grid; place-items: center; transition: opacity .3s, border-color .2s; }
-.pager button:hover { border-color: var(--mint-mid); color: var(--mint-ink); }
-.pager button:disabled { opacity: .3; cursor: default; }
-.pager svg { width: 16px; height: 16px; }
+/* ---------- phone / narrow: slides stack and scroll ---------- */
+body.flow{overflow:auto}
+body.flow .deck{position:static;display:block;background:var(--bg)}
+body.flow .stage{width:auto;height:auto;transform:none!important}
+body.flow .slide{position:relative;inset:auto;opacity:1;visibility:visible;border-radius:0;box-shadow:none;
+  padding:40px max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px));border-bottom:8px solid var(--paper);overflow:visible}
+body.flow .s0{flex-direction:column;align-items:stretch;gap:36px}
+body.flow .s0 .left{flex:none}
+body.flow .s0 h1{font-size:40px}
+body.flow .s0 .cheek{font-size:18px}
+body.flow .phone{width:min(260px,80vw);align-self:center}
+body.flow .hint{display:none}
+body.flow h2{font-size:25px}
+body.flow .g3,body.flow .g2,body.flow .g3b,body.flow .g4{display:flex;flex-direction:column}
+body.flow .lever{grid-template-columns:1fr}
+body.flow .rules{grid-template-columns:1fr 1fr}
+body.flow .bar{grid-template-columns:110px 1fr 34px}
+body.flow .opts-wrap{overflow-x:auto}
+body.flow table.opts{min-width:560px}
+body.flow .foot{flex-direction:column;align-items:flex-start;gap:6px;margin-top:8px}
+body.flow .nav{display:none}
+body.flow .vs{right:-8px}
 
-/* ---------------- narrow screens */
-@media (max-width: 860px) {
-  .brand .txt { display: none; }
-  .week { grid-template-columns: repeat(5, minmax(0, 1fr)); flex: 1 1 100%; }
-  .behind { flex-direction: row; gap: 12px; padding: 10px 16px; }
-  .num { font-size: 32px; }
-  .bar { grid-template-columns: minmax(0, 1fr) 70px; gap: 6px 12px; }
-  .bar .track { grid-column: 1 / -1; grid-row: 2; }
-  .cards { grid-template-columns: minmax(0, 1fr); }
-  .card { min-height: 0; padding: 16px 18px; }
-  .opt { grid-template-columns: minmax(0, 1fr) repeat(3, 44px); gap: 6px; padding: 10px 12px; }
-  .opt.head span:not(:first-child) { font-size: 10.5px; line-height: 1.2; }
-  .jodi { grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 18px; }
-  .phone { height: min(360px, calc(100dvh - var(--bar) - 390px)); border-radius: 24px; border-width: 5px; }
-  .capbox { width: 100%; }
-  .caps { min-height: 150px; width: 100%; text-align: center; }
-  .cap .n { margin: 0 auto 8px; }
-  .cap h3 { font-size: 20px; }
-  .cap p { font-size: 15px; }
-  .cap .from { margin-top: 10px; }
-  .pips { justify-content: center; }
-  .tiles { grid-template-columns: minmax(0, 1fr); gap: 8px; }
-  .tile { padding: 10px 16px; grid-template-columns: auto 1fr; column-gap: 14px; align-items: baseline; }
-  .tile small { grid-column: 1 / -1; }
-  .tile output { font-size: 28px; }
-  .pager, .hint-down { display: none; }
-  .inner { padding-block: 12px 56px; }
+/* ---------- print: one slide per page ---------- */
+@page{size:1280px 720px;margin:0}
+@media print{
+  html,body{height:auto;overflow:visible;background:#fff}
+  .deck{position:static;display:block;background:#fff}
+  .stage{transform:none!important;height:auto}
+  .slide{position:relative;inset:auto;width:1280px;height:720px;opacity:1;visibility:visible;border-radius:0;box-shadow:none;page-break-after:always;break-after:page}
+  .slide:last-child{page-break-after:auto;break-after:auto}
+  .a,.bar i,.sc .t i{opacity:1!important;transform:none!important;transition:none!important}
+  .nav,.hint{display:none}
+  .phone{box-shadow:0 0 0 1px var(--line)!important}
+  .screen-only{display:none!important}
+  .print-only{display:block!important}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
-@media (max-width: 480px) {
-  .dots { display: none; }
-  .topbar { grid-template-columns: 1fr auto; }
-  .model-link { padding: 0 10px; font-size: 12px; }
-  .title { font-size: 24px; }
-}
-
-/* reduced motion: no movement, only quick fades */
-.rm *, .rm *::before, .rm *::after { transition-duration: .01s !important; transition-delay: 0s !important; animation: none !important; }
+@media (prefers-reduced-motion:reduce){.a,.bar i,.sc .t i,.slide{transition:none!important}}
 </style>
+</head>
+<body>
+<main class="deck" id="deck">
+<div class="stage" id="stage">
 
-<header class="topbar">
-  <div class="brand"><span class="pair" aria-hidden="true"><span>R</span><span>A</span></span><span class="txt">Study Jodi</span></div>
-  <nav class="dots" aria-label="Scenes"></nav>
-  <div class="right">
-    <button class="icon-btn" id="snd" type="button" aria-label="Turn sound on" hidden>
-      <svg class="on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6 M18 6.5a7.8 7.8 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-      <svg class="off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M16 9.5l5 5 M21 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-    </button>
-    <a class="model-link" href="https://docs.google.com/spreadsheets/d/1Iic9pbfNnvVfCHMG_8O1zASyfcNbfsPElaqOsVRaV3M/edit?usp=sharing" target="_blank" rel="noopener">Impact model ↗</a>
+<!-- ============ 0 · INTRO ============ -->
+<section class="slide s0" id="intro" aria-label="Intro">
+  <div class="left">
+    <div class="kick a" style="--i:0">
+      <span class="blocks" aria-hidden="true"><i style="background:var(--mint)"></i><i style="background:var(--butter)"></i><i style="background:var(--peach)"></i><i style="background:var(--lilac)"></i></span>
+      A PM case for Gameberry Labs
+    </div>
+    <h1 class="a" style="--i:1">1010! has been playing<br>alone since 2014.<br><span>Let's fix that.</span></h1>
+    <p class="cheek a" style="--i:2">1010! is Tetris that stopped falling. You drop three blocks on a 10×10 board, fill a row or column, and it clears. It is calm, endless and the original of the hottest genre in mobile. The only opponent it has ever given you is <em>your own high score</em>.</p>
+    <p class="lead a" style="--i:3">This deck proposes <b style="color:var(--ink)">Block Battle</b>: a 2-minute head-to-head mode where your clears land on your rival's board. The goal is +10% daily active players.</p>
+    <div class="a" style="--i:4;display:flex;gap:28px;align-items:center;flex-wrap:wrap">
+      <div class="who"><b>Aditya Firoda</b>ISB PGP · PM / APM case</div>
+      <div class="links">
+        <a class="btn" href="https://gameberry-submission.vercel.app/play/">Play the prototype →</a>
+        <a class="btn alt" href="https://gameberry-submission.vercel.app/model/Block_Battle_DAU_Model.xlsx">Impact model</a>
+      </div>
+    </div>
   </div>
-</header>
-<div class="progress" aria-hidden="true"><i></i></div>
+  <div class="phone a" style="--i:2">
+    <img src="assets/real_1010_gameplay.gif" alt="Real 1010! gameplay: pieces dropped onto a 10 by 10 board, rows clearing">
+    <span class="pill p-peach vs">1 player. Always.</span>
+    <span class="pill p-mint tag">The real game, from my own 10-minute run</span>
+  </div>
+  <div class="hint screen-only"><kbd>↓</kbd> scroll, swipe or use arrow keys</div>
+</section>
 
-<main class="stage" id="stage">
-
-  <!-- 0 · cover -->
-  <section class="scene cover" data-name="Start" data-steps="0">
-    <div class="inner">
-      <p class="eyebrow">Gameberry Labs · PM case · CrackitToday</p>
-      <span class="pair" aria-hidden="true"><span>R</span><span>A</span></span>
-      <h1>Study Jodi</h1>
-      <p>A daily study partner for current-affairs readers.</p>
-      <div class="go">
-        <button class="btn btn-main" type="button" id="go-sound">Start with sound</button>
-        <button class="btn btn-text" type="button" id="go-quiet">Start without sound</button>
+<!-- ============ 1 · WHY 1010! ============ -->
+<section class="slide" id="why" aria-label="Why 1010!">
+  <div class="kick a" style="--i:0"><b style="background:var(--peach)">1</b>Why 1010!, and where its daily players leak</div>
+  <h2 class="a" style="--i:0">The original of mobile's #1 genre, losing the players who made it a daily habit.</h2>
+  <div class="g3">
+    <div class="card a" style="--i:1">
+      <h3>A booming genre, an ageing incumbent</h3>
+      <div class="statrow">
+        <div class="stat"><div class="big">#1</div><span>Block Blast!, a 2022 copy of the format, was the most-downloaded game worldwide in 2025 (AppMagic) and in Q1 2026 (Sensor Tower).</span></div>
+        <div class="stat"><div class="big">10M+</div><span>1010! installs on Google Play; 4.27★ from 23.6K US App Store ratings.</span></div>
+        <div class="stat"><div class="big">2014</div><span>Launched by Gram Games (now Zynga). Still updated: v71.59 on 21 Nov 2026.</span></div>
       </div>
-      <p class="how">Each screen plays on its own. Scroll, swipe or press ↓ for the next one.</p>
+      <p class="tiny" style="margin-top:auto">Players still want this game. The open question is whether 1010! keeps the ones it has.</p>
     </div>
-  </section>
-
-  <!-- 1 · the problem -->
-  <section class="scene s1" data-name="The problem" data-steps="3">
-    <div class="inner">
-      <span class="kicker">The problem</span>
-      <h2 class="title">Riya means to read every day. Then the misses begin.</h2>
-      <div class="pic week-wrap">
-        <div class="week">
-          <div class="day ok" data-step="1"><b>Mon</b><i>✓</i></div>
-          <div class="day ok" data-step="1" style="--d:.18s"><b>Tue</b><i>✓</i></div>
-          <div class="day miss" data-step="2"><b>Wed</b><i>✕</i></div>
-          <div class="day miss" data-step="2" style="--d:.18s"><b>Thu</b><i>✕</i></div>
-          <div class="day miss" data-step="2" style="--d:.36s"><b>Fri</b><i>✕</i></div>
-        </div>
-        <div class="behind"><small>Days behind</small><span class="num" id="behind">0</span></div>
+    <div class="card a" style="--i:2">
+      <h3>What I saw playing it: losing is a dead end</h3>
+      <img class="strip" src="assets/real_1010_gameover.jpg" alt="1010! game over: a Revive countdown, then an ad loading, then a playable ad for another game">
+      <div class="steps3"><span>Game over → “Revive” (watch an ad)</span><span>Ad loads</span><span>A playable ad for another game</span></div>
+      <p class="small">One 10.5-minute run (score 1,139): no other person at any point, and the end led to an ad, not a reason to play again.</p>
+    </div>
+    <div class="card a" style="--i:3">
+      <h3>What players write</h3>
+      <div class="bars" role="img" aria-label="Share of 628 recent App Store reviews by theme">
+        <div class="bar" style="--i:3" title="212 of 628 reviews"><span>Freezes / crashes</span><div class="t"><i style="width:100%"></i></div><b>34%</b></div>
+        <div class="bar" style="--i:3" title="209 of 628 reviews"><span>Ads</span><div class="t"><i style="width:97%"></i></div><b>33%</b></div>
+        <div class="bar" style="--i:3" title="151 of 628 reviews"><span>“Bring back the old game”</span><div class="t"><i style="width:71%"></i></div><b>24%</b></div>
+        <div class="bar" style="--i:3" title="37 of 628 reviews"><span>Lost score / progress</span><div class="t"><i style="width:18%"></i></div><b>6%</b></div>
+        <div class="bar" style="--i:3" title="8 of 628 reviews"><span>Friends / social</span><div class="t"><i class="cool" style="width:3%"></i></div><b>1%</b></div>
       </div>
-      <p class="line" data-step="3">Nobody notices. <b>Nothing brings Riya back.</b></p>
+      <p class="small">The typical writer has played for <b style="color:var(--ink)">7–13 years</b>. Their complaint: the calm, skill-based game is buried under power-ups and pop-ups, so “high scores don't mean anything”.</p>
+      <p class="tiny">Bugs are a fix, not a feature; ads are out of scope. What is left is a core game that gives veterans nothing new to come back for.</p>
     </div>
-  </section>
+  </div>
+  <div class="lever a" style="--i:4">
+    <div class="lbl">For a mature game, the lever is keeping today's players</div>
+    <div class="n"><div class="big">+42%</div><span>DAU from +10% on the share of daily players who return the next day (80% → 88%)</span></div>
+    <div class="n"><div class="big">+0.7%</div><span>DAU from +10% more new players a day: new players are only ~3% of daily players</span></div>
+    <div class="n"><div class="big">82.7%</div><span>next-day return needed to hit +10% DAU through retention alone (from 80%)</span></div>
+  </div>
+  <div class="foot"><span class="src">Reviews: 628 App Store reviews since Jun 2025 (US, UK, CA, AU, IN), keyword-tagged; signals, not a survey. Lever figures come from my model on a 100K DAU index, because 1010!'s real DAU is not public.</span><span>1 / 4</span></div>
+</section>
 
-  <!-- 2 · the lever -->
-  <section class="scene s2" data-name="The lever" data-steps="3">
-    <div class="inner">
-      <span class="kicker">Where DAU is stuck</span>
-      <h2 class="title">Readers don't come back the next day.</h2>
-      <div class="pic bars">
-        <div class="bar a" data-step="1" style="--w:91%"><span>10% more readers come back</span><span class="track"><i class="fill"></i></span><output data-to="7.3">+0.0%</output></div>
-        <div class="bar b" data-step="2" style="--w:37%"><span>10% more new installs</span><span class="track"><i class="fill"></i></span><output data-to="3.0">+0.0%</output></div>
+<!-- ============ 2 · WHO & OPTIONS ============ -->
+<section class="slide" id="options" aria-label="Who and options">
+  <div class="kick a" style="--i:0"><b style="background:var(--butter)">2</b>Who we build for, and what we weighed</div>
+  <h2 class="a" style="--i:0">Veterans don't need more features. They need a reason for today's game to matter.</h2>
+  <div class="g2">
+    <div class="seg">
+      <div class="segrow t a" style="--i:1"><div class="top"><b>Veteran habit players</b><span class="pill p-mint">Target</span></div><span>Years of daily play, for calm. The core of the reviews, and churning now.</span></div>
+      <div class="segrow t a" style="--i:1"><div class="top"><b>Score competitors</b><span class="pill p-mint">Target</span></div><span>Want a skill score that means something. Power-ups broke that.</span></div>
+      <div class="segrow a" style="--i:2"><div class="top"><b>Daily-puzzle completers</b><span class="pill p-sky">Served by daily puzzles</span></div><span>Treat the daily puzzle as an appointment; bugs erase progress.</span></div>
+      <div class="segrow a" style="--i:2"><div class="top"><b>New casual players</b><span class="pill p-lilac">Served by Adventure Mode</span></div><span>Arrive in the Block Blast wave, through goal-based levels.</span></div>
+      <div class="truth a" style="--i:3"><b>Player truth</b>A solo high score stops feeling like a reason to play after the thousandth game. A real person on the other side of the board makes the same calm game matter again, and a loss becomes a rematch rather than an ad.</div>
+    </div>
+    <div class="card a opts-wrap" style="--i:4;background:#fff;padding:0 0 0 4px">
+      <table class="opts">
+        <thead><tr><th style="width:110px">Design lens</th><th>Option</th><th>A reason to come back tomorrow</th><th>Keeps the calm core intact</th><th>Buildable on today's engine</th></tr></thead>
+        <tbody>
+          <tr><td><span class="lens">Depth</span></td><td><span class="nm">Piece preview + hold slot</span>Plan two moves ahead</td><td class="c n">○</td><td class="c y">●</td><td class="c y">●</td></tr>
+          <tr><td><span class="lens">Tension</span></td><td><span class="nm">Pressure mode</span>The board rises on a timer</td><td class="c n">○</td><td class="c n">○</td><td class="c y">●</td></tr>
+          <tr><td><span class="lens">Feel</span></td><td><span class="nm">Music-reactive board</span>Clears play notes and build a track</td><td class="c n">○</td><td class="c y">●</td><td class="c m">◐</td></tr>
+          <tr><td><span class="lens">Session shape</span></td><td><span class="nm">Daily Board</span>One seeded board a day; share your score</td><td class="c m">◐</td><td class="c y">●</td><td class="c y">●</td></tr>
+          <tr><td><span class="lens">Gamification</span></td><td><span class="nm">Streaks, leagues, badges</span>Meta layered on top of play</td><td class="c m">◐</td><td class="c n">○</td><td class="c y">●</td></tr>
+          <tr class="win"><td><span class="lens" style="color:var(--mint-ink)">Other players</span></td><td><span class="nm">Block Battle</span>Your clears land on a rival's board</td><td class="c y">●</td><td class="c y">●</td><td class="c m">◐</td></tr>
+        </tbody>
+      </table>
+      <p class="small" style="padding:10px 6px 0"><span class="verdict">Pick: Block Battle.</span> Only here does another person create the reason to return. Daily Board, the runner-up, becomes its first step (same seed, played async). Gamification is the meta 1010! already added, and reviews push back on it.</p>
+    </div>
+  </div>
+  <div class="foot"><span class="src">● strong · ◐ partial · ○ weak. Segments come from review themes and store data; their sizes are not public.</span><span>2 / 4</span></div>
+</section>
+
+<!-- ============ 3 · BLOCK BATTLE ============ -->
+<section class="slide" id="battle" aria-label="Block Battle">
+  <div class="kick a" style="--i:0"><b style="background:var(--mint)">3</b>The feature</div>
+  <h2 class="a" style="--i:0">Block Battle: same 1010!, but your clears become your rival's problem.</h2>
+  <div class="g3b">
+    <div class="a" style="--i:1">
+      <div class="gifbox">
+        <img class="screen-only" src="assets/block_battle_steps.gif" alt="Animated walkthrough: a double clear sends a junk row with one gap to the opponent's board">
+        <img class="print-only" src="assets/block_battle_steps_poster.png" alt="Block Battle walkthrough still">
+        <a class="btn" href="https://gameberry-submission.vercel.app/play/">Play it vs a bot →</a>
       </div>
-      <p class="note" data-step="1">Effect on DAU, from the impact model</p>
-      <p class="line" data-step="3">Retention moves DAU <b>2.4× more.</b> That's the lever.</p>
-    </div>
-  </section>
-
-  <!-- 3 · the user truth -->
-  <section class="scene s3" data-name="What aspirants do" data-steps="3">
-    <div class="inner">
-      <span class="kicker">What aspirants already do</span>
-      <h2 class="title">They stay consistent with someone beside them.</h2>
-      <div class="pic cards">
-        <div class="card c1" data-step="1"><strong>₹1,000–4,000</strong><p>a month for a reading-room desk, to study beside others</p><small>ThePrint, 2026</small></div>
-        <div class="card c2" data-step="2"><strong>“Partner wanted”</strong><p>forum posts asking for someone to keep daily targets with</p><small>ForumIAS</small></div>
-        <div class="card c3" data-step="3"><strong>22% more</strong><p>likely to finish the daily lesson with a friend streak</p><small>Duolingo research</small></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 4 · options -->
-  <section class="scene s4" data-name="Options" data-steps="2">
-    <div class="inner">
-      <span class="kicker">Options</span>
-      <h2 class="title">Four ideas. One passes every test.</h2>
-      <div class="pic opts">
-        <div class="opt head" data-step="1"><span></span><span>Brings daily readers back</span><span>Works with few users</span><span>New vs rivals</span></div>
-        <div class="opt" data-step="1" style="--d:.08s"><span>Solo streak</span><i class="mk p">~</i><i class="mk y">✓</i><i class="mk n">✕</i></div>
-        <div class="opt" data-step="1" style="--d:.16s"><span>Live quiz + rank</span><i class="mk y">✓</i><i class="mk n">✕</i><i class="mk p">~</i></div>
-        <div class="opt" data-step="1" style="--d:.24s"><span>Syllabus map</span><i class="mk n">✕</i><i class="mk y">✓</i><i class="mk y">✓</i></div>
-        <div class="opt win" data-step="2"><span>Partner streak</span><i class="mk y">✓</i><i class="mk y">✓</i><i class="mk y">✓</i></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 5 · Study Jodi -->
-  <section class="scene s5" data-name="Study Jodi" data-steps="4">
-    <div class="inner">
-      <span class="kicker">The idea</span>
-      <h2 class="title">Study Jodi: today's 5 questions, done with a partner.</h2>
-      <div class="pic jodi">
-        <div class="phone" role="img" aria-label="Study Jodi screens">
-          <img class="on" src="story/jodi1.jpg" alt="" width="600" height="1310">
-          <img src="story/jodi2.jpg" alt="" width="600" height="1310">
-          <img src="story/jodi3.jpg" alt="" width="600" height="1310">
-          <img src="story/jodi4.jpg" alt="" width="600" height="1310">
-          <span class="hl"></span>
-        </div>
-        <div class="capbox">
-          <div class="caps">
-            <div class="cap" data-only="1"><span class="n">1</span><h3>Your partner is waiting</h3><p>Ankit is done. Now it's Riya's turn.</p><span class="from">Like Ludo STAR filling empty seats</span></div>
-            <div class="cap" data-only="2"><span class="n">2</span><h3>Built from today's cards</h3><p>5 questions, about 2 minutes.</p></div>
-            <div class="cap" data-only="3"><span class="n">3</span><h3>Share the result</h3><p>A free invite into WhatsApp study groups.</p><span class="from">Like Wordle's share grid</span></div>
-            <div class="cap" data-only="4"><span class="n">4</span><h3>Next day: carry your partner</h3><p>Ankit missed it. 2 extra questions save the streak.</p><span class="from">Like gifting in Lucky Dice</span></div>
-          </div>
-          <div class="pips" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-        </div>
+      <div class="rules">
+        <div><b>Same rules</b>10×10, three pieces, rows and columns clear.</div>
+        <div><b>2+ lines = attack</b>A junk row rises on your rival's board, with one gap.</div>
+        <div><b>Block it</b>Clear fast enough and incoming junk is cancelled.</div>
+        <div><b>2 minutes</b>Top out and you lose; otherwise higher score wins.</div>
       </div>
     </div>
-  </section>
-
-  <!-- 6 · impact -->
-  <section class="scene s6" data-name="Impact" data-steps="4">
-    <div class="inner">
-      <span class="kicker">Impact</span>
-      <h2 class="title">What Study Jodi adds to daily users.</h2>
-      <div class="pic">
-        <div class="tiles">
-          <div class="tile" data-step="1"><small>Low · 30% paired</small><output data-to="2.7">+0.0%</output><span>+32 a day</span></div>
-          <div class="tile base" data-step="1" style="--d:.12s"><small>Base · 50% paired</small><output data-to="9.7">+0.0%</output><span>+112 a day</span></div>
-          <div class="tile" data-step="1" style="--d:.24s"><small>High · 65% paired</small><output data-to="24.1">+0.0%</output><span>+278 a day</span></div>
+    <div class="col">
+      <div class="a" style="--i:2">
+        <h3>Why it brings players back</h3>
+        <ul class="clean">
+          <li><b>Every clear has a target.</b> A double clear is no longer just points; it is pressure on a person.</li>
+          <li><b>A loss is a rematch, not an ad.</b> The end screen offers “Rematch: get revenge” and “Challenge a friend”.</li>
+          <li><b>Classic stays untouched.</b> Battle is a separate mode with power-ups off, so skill decides.</li>
+        </ul>
+      </div>
+      <div class="a" style="--i:3">
+        <h3>Build it in three steps</h3>
+        <div class="path">
+          <div><em>1</em><p><b>Seeded duel (async).</b> Both players get the same pieces; your recorded clears replay as junk on their board. No servers in real time.</p></div>
+          <div><em>2</em><p><b>Challenge link.</b> “Beat me in Block Battle”; the link opens straight into the match, so it doubles as an invite.</p></div>
+          <div><em>3</em><p><b>Live 1v1</b> with skill-based matchmaking, once step 1 shows people come back for it.</p></div>
         </div>
-        <div class="split" data-step="2">
-          <div class="stack" aria-hidden="true"><i class="k1" style="--w:50%"></i><i class="k2" style="--w:45%"></i><i class="k3" style="--w:4%"></i></div>
-          <div class="legend"><span><em class="k1"></em>Partners return more <b>+4.9</b></span><span><em class="k2"></em>Nudges bring skippers back <b>+4.4</b></span><span><em class="k3"></em>Invites <b>+0.4</b></span></div>
-        </div>
-        <div class="test" data-step="3">
-          <span class="ppl" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="c"></i><i class="c"></i></span>
-          <p>Launch to 80%, keep 20% as control. Read in about 5 weeks.</p>
-        </div>
-        <div class="end" data-step="4">
-          <a class="btn btn-soft" href="https://docs.google.com/spreadsheets/d/1Iic9pbfNnvVfCHMG_8O1zASyfcNbfsPElaqOsVRaV3M/edit?usp=sharing" target="_blank" rel="noopener">Open the impact model ↗</a>
-          <button class="btn btn-text" type="button" id="replay">Replay</button>
-        </div>
-        <p class="note" data-step="4">Model estimates, not measured data. Clears 10% once 52% of users are paired.</p>
+      </div>
+      <div class="gb a" style="--i:4">
+        <h3>Straight from Gameberry's playbook</h3>
+        <p>Ludo STAR's loop is a quick match, a rematch and a friend invite. Gameberry reported that ~95% of its growth was organic, from invites built into the core game, and that 64% of weekly players swapped Lucky Dice with friends (2021). Block Battle puts that same loop inside 1010!.</p>
       </div>
     </div>
-  </section>
+  </div>
+  <div class="foot"><span class="src">Send-lines battles are proven in Tetris (Tetris 99) and exist in small block-puzzle apps (e.g. PVP Blocks, Block Clash); no major 10×10 game offers one. Gameberry figures: PocketGamer.biz, Aug 2021, self-reported.</span><span>3 / 4</span></div>
+</section>
 
-</main>
+<!-- ============ 4 · IMPACT ============ -->
+<section class="slide" id="impact" aria-label="Impact">
+  <div class="kick a" style="--i:0"><b style="background:var(--lilac)">4</b>Impact and how we'd prove it</div>
+  <h2 class="a" style="--i:0">Base case +9.5% DAU. It clears +10% once 21% of daily players battle.</h2>
+  <div class="g4">
+    <div class="card a" style="--i:1">
+      <h3>DAU lift by scenario</h3>
+      <div class="scen" role="img" aria-label="DAU lift: low 3.0 percent, base 9.5 percent, high 25.7 percent">
+        <div class="sc" style="--i:1" title="+2,965 daily players per 100K"><span>Low</span><div class="t"><i style="width:11.7%"></i><b style="left:calc(11.7% + 8px)">+3.0%</b></div></div>
+        <div class="sc base" style="--i:1" title="+9,510 daily players per 100K"><span>Base</span><div class="t"><i style="width:37%"></i><b style="left:calc(37% + 8px)">+9.5%</b><span class="target" style="left:38.9%"><small>+10% goal</small></span></div></div>
+        <div class="sc" style="--i:1" title="+25,746 daily players per 100K"><span>High</span><div class="t"><i style="width:100%"></i><b style="left:auto;right:8px;color:#fff">+25.7%</b></div></div>
+      </div>
+      <h3 style="margin:10px 0 0">Where the base +9.5 points come from</h3>
+      <div class="stack" role="img" aria-label="Base case split: 7.6 points from battlers returning more, 1.5 from rematch and friend nudges, 0.4 from challenge links">
+        <i style="flex:7.6;background:var(--mint-ink)"></i><i style="flex:1.5;background:var(--mint)"></i><i style="flex:.4;background:var(--butter)"></i>
+      </div>
+      <div class="leg">
+        <div><i style="background:var(--mint-ink)"></i>Battlers come back more often<b>+7.6</b></div>
+        <div><i style="background:var(--mint)"></i>Rematch and friend nudges<b>+1.5</b></div>
+        <div><i style="background:var(--butter)"></i>Challenge links bring new players<b>+0.4</b></div>
+      </div>
+    </div>
+    <div class="card a" style="--i:2">
+      <h3>Key assumptions (base)</h3>
+      <table class="as">
+        <tr><td>Daily players who battle<span class="typ p-butter">assumption</span></td><td>20%</td></tr>
+        <tr><td>Battlers' extra next-day return, relative<span class="typ p-sky">benchmark ÷ 2</span></td><td>+11%</td></tr>
+        <tr><td>Next-day return today<span class="typ p-butter">assumption</span></td><td>80%</td></tr>
+        <tr><td>New players a day, per 100K DAU<span class="typ p-butter">assumption</span></td><td>3,000</td></tr>
+        <tr><td>Challenge links per battler a day<span class="typ p-butter">assumption</span></td><td>0.05</td></tr>
+      </table>
+      <p class="small">+11% is half of the outside benchmark: Duolingo, the language-learning app, found learners with a friend streak were 22% more likely to do their daily lesson (2024). It is halved because a match is lighter than a shared streak.</p>
+      <p class="tiny" style="margin-top:auto">The % lift does not depend on 1010!'s real size; the model uses a 100K DAU index.</p>
+    </div>
+    <div class="card a" style="--i:3">
+      <h3>How we'd prove it</h3>
+      <ul class="clean">
+        <li><b>90/10 holdout for 4 weeks.</b> 10% never see Battle; matches form only inside the 90%, so the pool isn't halved.</li>
+        <li><b>Read next-day return in weeks 3–4,</b> after the novelty fades. The base gap (1.8 pts) is ~3.5× the standard error of a single day's read.</li>
+      </ul>
+      <h3 style="margin:6px 0 0">Guardrails</h3>
+      <p class="small">Classic-mode return rate · ad revenue per DAU · crash rate · match wait time</p>
+      <h3 style="margin:6px 0 0">Risks</h3>
+      <p class="small"><b style="color:var(--ink)">Losing streaks</b> → skill matchmaking and a bot fallback. <b style="color:var(--ink)">Real-time cost</b> → ship async first. <b style="color:var(--ink)">Fewer ad views per session</b> → watch revenue per DAU, not per session.</p>
+      <div class="links" style="margin-top:auto">
+        <a class="btn" href="https://gameberry-submission.vercel.app/play/" style="padding:9px 13px;font-size:13px">Play it →</a>
+        <a class="btn alt" href="https://gameberry-submission.vercel.app/model/Block_Battle_DAU_Model.xlsx" style="padding:9px 13px;font-size:13px">Impact model</a>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="src">Model: DAU = new + current + returning, with current players settling at inflow ÷ (1 − next-day return). Low / High vary adoption (10–30%), lift and invites together. Figures are model outputs, not data.</span><span>4 / 4</span></div>
+</section>
 
-<div class="hint-down off" aria-hidden="true">Scroll<svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-<div class="pager">
-  <button type="button" id="prev" aria-label="Previous screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-  <button type="button" id="next" aria-label="Next screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
 </div>
+</main>
+<nav class="nav" id="nav" aria-label="Slides"></nav>
 
 <script>
-/* Soft sound cues, synthesised in the browser. Nothing plays until a click turns sound on. */
-window.Snd = (function () {
-  var AC = window.AudioContext || window.webkitAudioContext, ctx, master, fx, on = false, last = 0, nb;
-  function build() {
-    ctx = new AC(); master = ctx.createGain(); master.gain.value = 0;
-    var comp = ctx.createDynamicsCompressor(); comp.threshold.value = -18; master.connect(comp); comp.connect(ctx.destination);
-    var conv = ctx.createConvolver(), len = ctx.sampleRate * 1.2, b = ctx.createBuffer(2, len, ctx.sampleRate);
-    for (var c = 0; c < 2; c++) { var d = b.getChannelData(c); for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 4); }
-    conv.buffer = b; var send = ctx.createGain(); send.gain.value = .25; conv.connect(master); send.connect(conv);
-    fx = ctx.createGain(); fx.connect(master); fx.connect(send);
-  }
-  function noise() { if (nb) return nb; nb = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate); var d = nb.getChannelData(0); for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; return nb; }
-  function env(t, g, a, dec) { var e = ctx.createGain(); e.gain.setValueAtTime(.0001, t); e.gain.exponentialRampToValueAtTime(g, t + a); e.gain.exponentialRampToValueAtTime(.0001, t + dec); e.connect(fx); return e; }
-  function tone(f, t, g, dec, type) { var o = ctx.createOscillator(); o.type = type || 'sine'; o.frequency.setValueAtTime(f, t); o.connect(env(t, g, .008, dec)); o.start(t); o.stop(t + dec + .05); }
-  function mallet(f, t, g) { tone(f, t, g, .5); tone(f * 3.99, t, g * .2, .12); }
-  function swish(t, dur, f1, f2, g) { var s = ctx.createBufferSource(); s.buffer = noise(); s.loop = true; var bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = .8; bp.frequency.setValueAtTime(f1, t); bp.frequency.exponentialRampToValueAtTime(f2, t + dur); var e = ctx.createGain(); e.gain.setValueAtTime(.0001, t); e.gain.linearRampToValueAtTime(g, t + dur * .35); e.gain.linearRampToValueAtTime(.0001, t + dur); e.connect(fx); s.connect(bp); bp.connect(e); s.start(t); s.stop(t + dur + .05); }
-  function pad(fs, t, g, dur) { fs.forEach(function (f, i) { var e = ctx.createGain(); e.gain.setValueAtTime(.0001, t); e.gain.linearRampToValueAtTime(g, t + .15 + i * .03); e.gain.linearRampToValueAtTime(.0001, t + dur); e.connect(fx); var o = ctx.createOscillator(); o.frequency.value = f; o.connect(e); o.start(t); o.stop(t + dur + .05); }); }
-  var C = {
-    start: function (t) { mallet(659.25, t, .08); mallet(987.77, t + .1, .07); },
-    scene: function (t) { swish(t, .6, 400, 1600, .035); },
-    good: function (t) { mallet(659.25, t, .09); mallet(783.99, t + .35, .08); },
-    miss: function (t) { tone(196, t, .1, .35); tone(174.61, t + .35, .09, .35); tone(155.56, t + .7, .09, .4); },
-    tick: function (t) { mallet(1318.5, t, .035); },
-    line: function (t) { pad([392, 493.88, 587.33], t, .03, 1.4); },
-    rise: function (t) { var o = ctx.createOscillator(), e = ctx.createGain(); o.frequency.setValueAtTime(330, t); o.frequency.exponentialRampToValueAtTime(587, t + .9); e.gain.setValueAtTime(.0001, t); e.gain.linearRampToValueAtTime(.045, t + .4); e.gain.linearRampToValueAtTime(.0001, t + 1.1); e.connect(fx); o.connect(e); o.start(t); o.stop(t + 1.2); },
-    card: function (t) { swish(t, .35, 600, 2200, .05); },
-    win: function (t) { mallet(783.99, t, .08); mallet(1046.5, t + .1, .07); mallet(1318.5, t + .2, .06); },
-    step: function (t, i) { mallet([523.25, 587.33, 659.25, 783.99][i || 0], t, .08); },
-    end: function (t) { [523.25, 659.25, 783.99, 1046.5].forEach(function (f, i) { mallet(f, t + i * .08, .06); }); }
-  };
-  return {
-    ok: !!AC,
-    enable: function () { if (!AC) return; try { if (!ctx) build(); if (ctx.state === 'suspended') ctx.resume(); } catch (e) { return; } on = true; master.gain.setTargetAtTime(.6, ctx.currentTime, .02); },
-    mute: function () { if (!ctx) return; on = false; master.gain.setTargetAtTime(0, ctx.currentTime, .05); },
-    isOn: function () { return on; },
-    play: function (n, delay, arg) { if (!on || !ctx || !C[n]) return; var t = Math.max(ctx.currentTime + .01 + (delay || 0), last + .08); last = t; C[n](t, arg); }
-  };
-})();
-
-(function () {
-  'use strict';
-  var doc = document, root = doc.documentElement, RM = root.classList.contains('rm'), S = window.Snd;
-  function $(s, c) { return (c || doc).querySelector(s); }
-  function $$(s, c) { return Array.prototype.slice.call((c || doc).querySelectorAll(s)); }
-
-  var scenes = $$('.scene'), N = scenes.length, cur = 0, k = 0, started = false, lockUntil = 0;
-  var steps = scenes.map(function (s) { return +s.getAttribute('data-steps') || 0; });
-
-  /* numbers count up when their step arrives */
-  function fmt(v) { return '+' + v.toFixed(1) + '%'; }
-  function countTo(el, show, animate) {
-    var to = parseFloat(el.getAttribute('data-to'));
-    if (!show) { el.textContent = fmt(0); return; }
-    if (!animate || RM) { el.textContent = fmt(to); return; }
-    var t0 = performance.now();
-    (function f(now) { var p = Math.min(1, (now - t0) / 800); p = 1 - Math.pow(1 - p, 3); el.textContent = fmt(to * p); if (p < 1) requestAnimationFrame(f); })(t0);
-  }
-
-  /* scene 1: the days-behind counter */
-  var behind = $('#behind'), behindN = 0, behindT = [];
-  function setBehind(n, animate) {
-    behindT.forEach(clearTimeout); behindT = [];
-    if (!animate || RM) { behindN = n; behind.textContent = n; scenes[1].classList.toggle('late', n > 0); return; }
-    [1, 2, 3].forEach(function (v, i) {
-      behindT.push(setTimeout(function () { behindN = v; behind.textContent = v; behind.classList.remove('bump'); void behind.offsetWidth; behind.classList.add('bump'); S.play('tick'); if (v === 3) scenes[1].classList.add('late'); }, 250 + i * 200));
-    });
-  }
-
-  /* scene 5: the phone */
-  var imgs = $$('.phone img'), hl = $('.hl'), pips = $$('.pips i'), hlT = null, phoneAt = 1;
-  var HL = [[3, 4.2, 94, 13.3], [3.8, 16.6, 92.4, 24.3], [4.7, 43.7, 90.6, 24.3], [4.7, 69.5, 90.6, 19.3]];
-  function setPhone(kk, animate) {
-    var n = Math.max(1, kk), moved = n !== phoneAt;
-    imgs.forEach(function (im, i) { im.classList.toggle('on', i === n - 1); im.classList.toggle('gone', i < n - 1); });
-    pips.forEach(function (p, i) { p.classList.toggle('on', i === kk - 1); });
-    clearTimeout(hlT); hl.classList.remove('show');
-    if (kk > 0) {
-      var b = HL[n - 1];
-      hlT = setTimeout(function () {
-        hl.style.setProperty('--x', b[0] + '%'); hl.style.setProperty('--y', b[1] + '%'); hl.style.setProperty('--w', b[2] + '%'); hl.style.setProperty('--h', b[3] + '%');
-        hl.classList.add('show');
-      }, moved && animate && !RM ? 420 : 0);
-    }
-    phoneAt = n;
-  }
-
-  /* what each step does beyond showing its elements, and its sound */
-  var HOOK = {
-    1: function (kk, fw) { setBehind(kk >= 2 ? 3 : 0, fw && kk === 2); if (fw) S.play([null, 'good', 'miss', 'line'][kk]); },
-    2: function (kk, fw) { var o = $$('output', scenes[2]); countTo(o[0], kk >= 1, fw && kk === 1); countTo(o[1], kk >= 2, fw && kk === 2); if (fw) S.play([null, 'rise', 'tick', 'line'][kk]); },
-    3: function (kk, fw) { if (fw && kk) S.play('card'); },
-    4: function (kk, fw) { if (fw) S.play([null, 'card', 'win'][kk]); },
-    5: function (kk, fw) { setPhone(kk, fw); if (fw && kk) S.play('step', .1, kk - 1); },
-    6: function (kk, fw) { $$('output', scenes[6]).forEach(function (o) { countTo(o, kk >= 1, fw && kk === 1); }); if (fw) S.play([null, 'rise', 'tick', 'card', 'end'][kk]); }
-  };
-
-  function apply(i, kk, fw) {
-    var sc = scenes[i];
-    $$('[data-step]', sc).forEach(function (el) { el.classList.toggle('in', +el.getAttribute('data-step') <= kk); });
-    $$('[data-only]', sc).forEach(function (el) { el.classList.toggle('in', +el.getAttribute('data-only') === kk); });
-    if (HOOK[i]) HOOK[i](kk, fw);
-  }
-
-  var dotsBox = $('.dots'), dots = [];
-  scenes.forEach(function (s, i) {
-    var b = doc.createElement('button');
-    b.className = 'dot'; b.type = 'button'; b.setAttribute('aria-label', 'Go to: ' + s.getAttribute('data-name')); b.title = s.getAttribute('data-name');
-    b.innerHTML = '<span></span>';
-    b.addEventListener('click', function () { if (started && i !== cur) { goScene(i, i < cur, i > cur); } });
-    dotsBox.appendChild(b); dots.push(b);
+(function(){
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var stage=document.getElementById('stage'), nav=document.getElementById('nav');
+  var cur=-1, lock=0, flow=false;
+  var names=slides.map(function(s){return s.id});
+  slides.forEach(function(s,i){
+    var b=document.createElement('button'); b.setAttribute('aria-label','Slide '+(i+1));
+    b.onclick=function(){go(i)}; nav.appendChild(b);
   });
-
-  var bar = $('.progress i'), hint = $('.hint-down'), prevB = $('#prev'), nextB = $('#next');
-  function chrome() {
-    bar.style.width = (cur / (N - 1) * 100) + '%';
-    dots.forEach(function (d, i) { if (i === cur) d.setAttribute('aria-current', 'step'); else d.removeAttribute('aria-current'); d.disabled = !started; });
-    hint.classList.toggle('off', !started || cur === 0 || cur === N - 1);
-    prevB.disabled = !started || cur === 0;
-    nextB.disabled = !started || cur === N - 1;
+  function fit(){
+    flow = innerWidth < 760 || innerHeight < 420;
+    document.body.classList.toggle('flow',flow);
+    if(flow){ slides.forEach(function(s){s.classList.add('on')}); return; }
+    var k=Math.min((innerWidth-64)/1280,(innerHeight-48)/720);
+    stage.style.transform='scale('+Math.max(k,.3)+')';
+    if(cur<0) cur=0;
+    slides.forEach(function(s,i){s.classList.toggle('on',i===cur)});
   }
-
-  /* each scene plays its own steps on a timer; scrolling only moves between scenes */
-  var PACE = { 1: [450, 900, 1100], 2: [450, 1000, 1100], 3: [450, 650, 650], 4: [450, 900], 5: [400, 1900, 1900, 1900], 6: [450, 1000, 900, 900] };
-  var playT = [];
-  function stopPlay() { playT.forEach(clearTimeout); playT = []; }
-  function autoplay(n) {
-    var ds = PACE[n] || [], t = 0;
-    for (var st = 1; st <= steps[n]; st++) {
-      t += ds[st - 1] || 900;
-      (function (st) { playT.push(setTimeout(function () { if (cur !== n) return; k = st; apply(n, st, true); }, RM ? 0 : t)); })(st);
-    }
+  function go(i){
+    if(flow) { slides[i].scrollIntoView({behavior:'smooth'}); return; }
+    i=Math.max(0,Math.min(slides.length-1,i));
+    if(i===cur) return;
+    cur=i;
+    slides.forEach(function(s,j){s.classList.toggle('on',j===i)});
+    [].forEach.call(nav.children,function(b,j){b.classList.toggle('on',j===i)});
+    try{history.replaceState(null,'','#'+names[i])}catch(e){}
   }
-
-  function goScene(n, full, fw) {
-    stopPlay();
-    scenes.forEach(function (sc, i) {
-      sc.classList.toggle('on', i === n); sc.classList.toggle('above', i < n);
-      if (i === n) { sc.removeAttribute('inert'); sc.removeAttribute('aria-hidden'); } else { sc.setAttribute('inert', ''); sc.setAttribute('aria-hidden', 'true'); }
-    });
-    cur = n; k = full ? steps[n] : 0;
-    apply(n, k, false);
-    if (fw) S.play('scene');
-    if (!full) autoplay(n);
-    lock(700); chrome();
-  }
-  function lock(ms) { lockUntil = Date.now() + (RM ? 150 : ms); }
-  function next() { if (!started || Date.now() < lockUntil) return; if (cur < N - 1) goScene(cur + 1, false, true); }
-  function prev() { if (!started || Date.now() < lockUntil) return; if (cur > 0) goScene(cur - 1, true, false); }
-
-  /* input: one wheel gesture = one step; swipes; keys; buttons */
-  var acc = 0, used = false, quietT = null;
-  window.addEventListener('wheel', function (e) {
-    e.preventDefault();
-    clearTimeout(quietT); quietT = setTimeout(function () { used = false; acc = 0; }, 200);
-    if (used || Date.now() < lockUntil) return;
-    acc += e.deltaY;
-    if (Math.abs(acc) > 24) { used = true; if (acc > 0) next(); else prev(); acc = 0; }
-  }, { passive: false });
-  var ty = null;
-  window.addEventListener('touchstart', function (e) { ty = e.touches[0].clientY; }, { passive: true });
-  window.addEventListener('touchend', function (e) {
-    if (ty === null) return; var dy = ty - e.changedTouches[0].clientY; ty = null;
-    if (Math.abs(dy) > 40) { if (dy > 0) next(); else prev(); }
-  }, { passive: true });
-  doc.addEventListener('keydown', function (e) {
-    var t = (e.target.tagName || '').toLowerCase();
-    if (['ArrowDown', 'ArrowRight', 'PageDown'].indexOf(e.key) > -1 || (e.key === ' ' && t !== 'button' && t !== 'a')) { e.preventDefault(); next(); }
-    else if (['ArrowUp', 'ArrowLeft', 'PageUp'].indexOf(e.key) > -1) { e.preventDefault(); prev(); }
+  function step(d){ var now=Date.now(); if(now<lock) return; lock=now+700; go(cur+d); }
+  addEventListener('wheel',function(e){ if(flow) return; if(Math.abs(e.deltaY)<12) return; e.preventDefault(); step(e.deltaY>0?1:-1); },{passive:false});
+  addEventListener('keydown',function(e){
+    if(flow) return;
+    if(['ArrowDown','ArrowRight','PageDown',' '].indexOf(e.key)>=0){e.preventDefault();step(1)}
+    else if(['ArrowUp','ArrowLeft','PageUp'].indexOf(e.key)>=0){e.preventDefault();step(-1)}
+    else if(e.key==='Home'){go(0)} else if(e.key==='End'){go(slides.length-1)}
   });
-  nextB.addEventListener('click', next);
-  prevB.addEventListener('click', prev);
-
-  /* start and sound */
-  var sndBtn = $('#snd');
-  function renderSnd() { var o = S.isOn(); sndBtn.classList.toggle('is-on', o); sndBtn.setAttribute('aria-label', o ? 'Mute sound' : 'Turn sound on'); }
-  if (S.ok) sndBtn.hidden = false;
-  sndBtn.addEventListener('click', function () { if (S.isOn()) S.mute(); else S.enable(); renderSnd(); });
-  function begin(sound) { if (sound) { S.enable(); S.play('start'); } renderSnd(); started = true; goScene(1, false, false); }
-  $('#go-sound').addEventListener('click', function () { begin(true); });
-  $('#go-quiet').addEventListener('click', function () { begin(false); });
-  if (!S.ok) { $('#go-sound').textContent = 'Start'; $('#go-quiet').hidden = true; }
-  $('#replay').addEventListener('click', function () { scenes.forEach(function (s, i) { if (i) apply(i, 0, false); }); goScene(1, false, true); });
-
-  goScene(0, true, false);
-  lockUntil = 0;
+  var ty=null;
+  addEventListener('touchstart',function(e){ty=e.touches[0].clientY},{passive:true});
+  addEventListener('touchend',function(e){ if(flow||ty===null) return; var d=ty-e.changedTouches[0].clientY; if(Math.abs(d)>40) step(d>0?1:-1); ty=null; },{passive:true});
+  addEventListener('resize',fit);
+  addEventListener('beforeprint',function(){document.body.classList.remove('flow');slides.forEach(function(s){s.classList.add('on')})});
+  addEventListener('afterprint',fit);
+  fit();
+  var h=location.hash.slice(1), start=Math.max(0,names.indexOf(h));
+  cur=-1; go(start);
+  if(flow && start>0) slides[start].scrollIntoView();
 })();
 </script>
-
+</body>
 </html>
