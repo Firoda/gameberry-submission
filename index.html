@@ -284,7 +284,7 @@ a { color: var(--mint-ink); }
         <button class="btn btn-main" type="button" id="go-sound">Start with sound</button>
         <button class="btn btn-text" type="button" id="go-quiet">Start without sound</button>
       </div>
-      <p class="how">Scroll, swipe or press ↓ to move one step at a time.</p>
+      <p class="how">Each screen plays on its own. Scroll, swipe or press ↓ for the next one.</p>
     </div>
   </section>
 
@@ -364,7 +364,6 @@ a { color: var(--mint-ink); }
         </div>
         <div class="capbox">
           <div class="caps">
-            <div class="cap hint" data-only="0"><p>Scroll to walk through it.</p></div>
             <div class="cap" data-only="1"><span class="n">1</span><h3>Your partner is waiting</h3><p>Ankit is done. Now it's Riya's turn.</p><span class="from">Like Ludo STAR filling empty seats</span></div>
             <div class="cap" data-only="2"><span class="n">2</span><h3>Built from today's cards</h3><p>5 questions, about 2 minutes.</p></div>
             <div class="cap" data-only="3"><span class="n">3</span><h3>Share the result</h3><p>A free invite into WhatsApp study groups.</p><span class="from">Like Wordle's share grid</span></div>
@@ -408,8 +407,8 @@ a { color: var(--mint-ink); }
 
 <div class="hint-down off" aria-hidden="true">Scroll<svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
 <div class="pager">
-  <button type="button" id="prev" aria-label="Back one step"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-  <button type="button" id="next" aria-label="Next step"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <button type="button" id="prev" aria-label="Previous screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <button type="button" id="next" aria-label="Next screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
 </div>
 
 <script>
@@ -460,7 +459,6 @@ window.Snd = (function () {
 
   var scenes = $$('.scene'), N = scenes.length, cur = 0, k = 0, started = false, lockUntil = 0;
   var steps = scenes.map(function (s) { return +s.getAttribute('data-steps') || 0; });
-  var total = steps.reduce(function (a, b) { return a + b + 1; }, 0) - 1;
 
   /* numbers count up when their step arrives */
   function fmt(v) { return '+' + v.toFixed(1) + '%'; }
@@ -522,42 +520,46 @@ window.Snd = (function () {
     var b = doc.createElement('button');
     b.className = 'dot'; b.type = 'button'; b.setAttribute('aria-label', 'Go to: ' + s.getAttribute('data-name')); b.title = s.getAttribute('data-name');
     b.innerHTML = '<span></span>';
-    b.addEventListener('click', function () { if (started && i !== cur) { goScene(i, 0, i > cur); } });
+    b.addEventListener('click', function () { if (started && i !== cur) { goScene(i, i < cur, i > cur); } });
     dotsBox.appendChild(b); dots.push(b);
   });
 
   var bar = $('.progress i'), hint = $('.hint-down'), prevB = $('#prev'), nextB = $('#next');
   function chrome() {
-    var pos = 0; for (var i = 0; i < cur; i++) pos += steps[i] + 1; pos += k;
-    bar.style.width = (pos / total * 100) + '%';
+    bar.style.width = (cur / (N - 1) * 100) + '%';
     dots.forEach(function (d, i) { if (i === cur) d.setAttribute('aria-current', 'step'); else d.removeAttribute('aria-current'); d.disabled = !started; });
-    var atEnd = cur === N - 1 && k === steps[cur];
-    hint.classList.toggle('off', !started || cur === 0 || atEnd);
-    prevB.disabled = !started || (cur === 0 && k === 0);
-    nextB.disabled = !started || atEnd;
+    hint.classList.toggle('off', !started || cur === 0 || cur === N - 1);
+    prevB.disabled = !started || cur === 0;
+    nextB.disabled = !started || cur === N - 1;
   }
 
-  function goScene(n, kk, fw) {
-    scenes.forEach(function (s, i) {
-      s.classList.toggle('on', i === n); s.classList.toggle('above', i < n);
-      if (i === n) { s.removeAttribute('inert'); s.removeAttribute('aria-hidden'); } else { s.setAttribute('inert', ''); s.setAttribute('aria-hidden', 'true'); }
+  /* each scene plays its own steps on a timer; scrolling only moves between scenes */
+  var PACE = { 1: [450, 900, 1100], 2: [450, 1000, 1100], 3: [450, 650, 650], 4: [450, 900], 5: [400, 1900, 1900, 1900], 6: [450, 1000, 900, 900] };
+  var playT = [];
+  function stopPlay() { playT.forEach(clearTimeout); playT = []; }
+  function autoplay(n) {
+    var ds = PACE[n] || [], t = 0;
+    for (var st = 1; st <= steps[n]; st++) {
+      t += ds[st - 1] || 900;
+      (function (st) { playT.push(setTimeout(function () { if (cur !== n) return; k = st; apply(n, st, true); }, RM ? 0 : t)); })(st);
+    }
+  }
+
+  function goScene(n, full, fw) {
+    stopPlay();
+    scenes.forEach(function (sc, i) {
+      sc.classList.toggle('on', i === n); sc.classList.toggle('above', i < n);
+      if (i === n) { sc.removeAttribute('inert'); sc.removeAttribute('aria-hidden'); } else { sc.setAttribute('inert', ''); sc.setAttribute('aria-hidden', 'true'); }
     });
-    cur = n; k = kk;
-    apply(n, kk, false);
+    cur = n; k = full ? steps[n] : 0;
+    apply(n, k, false);
     if (fw) S.play('scene');
-    lock(600); chrome();
+    if (!full) autoplay(n);
+    lock(700); chrome();
   }
   function lock(ms) { lockUntil = Date.now() + (RM ? 150 : ms); }
-  function next() {
-    if (!started || Date.now() < lockUntil) return;
-    if (k < steps[cur]) { k++; apply(cur, k, true); lock(420); chrome(); }
-    else if (cur < N - 1) goScene(cur + 1, 0, true);
-  }
-  function prev() {
-    if (!started || Date.now() < lockUntil) return;
-    if (k > 0) { k--; apply(cur, k, false); lock(300); chrome(); }
-    else if (cur > 0) goScene(cur - 1, steps[cur - 1], false);
-  }
+  function next() { if (!started || Date.now() < lockUntil) return; if (cur < N - 1) goScene(cur + 1, false, true); }
+  function prev() { if (!started || Date.now() < lockUntil) return; if (cur > 0) goScene(cur - 1, true, false); }
 
   /* input: one wheel gesture = one step; swipes; keys; buttons */
   var acc = 0, used = false, quietT = null;
@@ -587,13 +589,13 @@ window.Snd = (function () {
   function renderSnd() { var o = S.isOn(); sndBtn.classList.toggle('is-on', o); sndBtn.setAttribute('aria-label', o ? 'Mute sound' : 'Turn sound on'); }
   if (S.ok) sndBtn.hidden = false;
   sndBtn.addEventListener('click', function () { if (S.isOn()) S.mute(); else S.enable(); renderSnd(); });
-  function begin(sound) { if (sound) { S.enable(); S.play('start'); } renderSnd(); started = true; goScene(1, 0, false); }
+  function begin(sound) { if (sound) { S.enable(); S.play('start'); } renderSnd(); started = true; goScene(1, false, false); }
   $('#go-sound').addEventListener('click', function () { begin(true); });
   $('#go-quiet').addEventListener('click', function () { begin(false); });
   if (!S.ok) { $('#go-sound').textContent = 'Start'; $('#go-quiet').hidden = true; }
-  $('#replay').addEventListener('click', function () { scenes.forEach(function (s, i) { if (i) apply(i, 0, false); }); goScene(1, 0, true); });
+  $('#replay').addEventListener('click', function () { scenes.forEach(function (s, i) { if (i) apply(i, 0, false); }); goScene(1, false, true); });
 
-  goScene(0, 0, false);
+  goScene(0, true, false);
   lockUntil = 0;
 })();
 </script>
