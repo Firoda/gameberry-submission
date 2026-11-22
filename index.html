@@ -30,8 +30,10 @@ a{color:inherit}
 .stage{width:1280px;height:720px;position:relative;flex:0 0 auto;transform-origin:center center}
 .slide{position:absolute;inset:0;background:var(--bg);border-radius:18px;box-shadow:0 10px 40px rgba(36,48,65,.08);
   padding:48px 64px 40px;display:flex;flex-direction:column;gap:20px;overflow:hidden;
-  opacity:0;visibility:hidden;transition:opacity .45s ease,visibility 0s linear .45s}
-.slide.on{opacity:1;visibility:visible;transition:opacity .45s ease}
+  opacity:0;visibility:hidden;transform:translateY(56px) scale(.97);
+  transition:opacity .5s ease,transform .7s cubic-bezier(.2,.8,.2,1),visibility 0s linear .7s}
+.slide.before{transform:translateY(-56px) scale(.97)}
+.slide.on{opacity:1;visibility:visible;transform:none;transition:opacity .55s ease .12s,transform .75s cubic-bezier(.2,.8,.2,1) .05s}
 
 /* autoplay: elements with .a appear in order when their slide is on */
 .a{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s cubic-bezier(.2,.7,.2,1);transition-delay:calc(var(--i,0) * 260ms + 150ms)}
@@ -101,8 +103,8 @@ ul.clean li b{color:var(--ink);font-weight:600}
 .bar b{color:var(--ink);font-variant-numeric:tabular-nums;text-align:right}
 .lever{display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:16px;align-items:center;background:var(--mint-bg);border-radius:14px;padding:14px 20px}
 .lever .lbl{font:600 15px var(--head);color:var(--mint-ink);max-width:210px;line-height:1.25}
-.lever .n{display:flex;gap:10px;align-items:baseline}
-.lever .n .big{color:var(--mint-ink);font-size:30px}
+.lever .n{display:flex;gap:12px;align-items:center}
+.lever .n .big{color:var(--mint-ink);font-size:30px;line-height:1;flex:0 0 auto}
 .lever .n span{font-size:12.5px;color:var(--ink2);line-height:1.35}
 
 /* ---------- slide 2 ---------- */
@@ -177,12 +179,15 @@ table.as tr:first-child td{border-top:0}
 .nav button{width:10px;height:10px;border-radius:50%;border:0;padding:0;background:#D5DBE4;cursor:pointer;transition:transform .2s,background .2s}
 .nav button.on{background:var(--ink);transform:scale(1.3)}
 .print-only{display:none!important}
+.snd{position:fixed;right:max(16px,env(safe-area-inset-right,0px));top:max(14px,env(safe-area-inset-top,0px));z-index:10;border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font:500 12px var(--body);color:var(--ink2);cursor:pointer}
+.snd[aria-pressed="false"]{color:var(--ink3)}
+body.flow .snd{display:none}
 
 /* ---------- phone / narrow: slides stack and scroll ---------- */
 body.flow{overflow:auto}
 body.flow .deck{position:static;display:block;background:var(--bg)}
 body.flow .stage{width:auto;height:auto;transform:none!important}
-body.flow .slide{position:relative;inset:auto;opacity:1;visibility:visible;border-radius:0;box-shadow:none;
+body.flow .slide{position:relative;inset:auto;opacity:1;visibility:visible;transform:none;border-radius:0;box-shadow:none;
   padding:40px max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px));border-bottom:8px solid var(--paper);overflow:visible}
 body.flow .s0{flex-direction:column;align-items:stretch;gap:36px}
 body.flow .s0 .left{flex:none}
@@ -207,10 +212,10 @@ body.flow .vs{right:-8px}
   html,body{height:auto;overflow:visible;background:#fff}
   .deck{position:static;display:block;background:#fff}
   .stage{transform:none!important;height:auto}
-  .slide{position:relative;inset:auto;width:1280px;height:720px;opacity:1;visibility:visible;border-radius:0;box-shadow:none;page-break-after:always;break-after:page}
+  .slide{position:relative;inset:auto;width:1280px;height:720px;opacity:1;visibility:visible;transform:none!important;border-radius:0;box-shadow:none;page-break-after:always;break-after:page}
   .slide:last-child{page-break-after:auto;break-after:auto}
   .a,.bar i,.sc .t i{opacity:1!important;transform:none!important;transition:none!important}
-  .nav,.hint{display:none}
+  .nav,.hint,.snd{display:none}
   .phone{box-shadow:0 0 0 1px var(--line)!important}
   .screen-only{display:none!important}
   .print-only{display:block!important}
@@ -235,10 +240,6 @@ body.flow .vs{right:-8px}
     <p class="lead a" style="--i:3">This deck proposes <b style="color:var(--ink)">Block Battle</b>: a 2-minute head-to-head mode where your clears land on your rival's board. The goal is +10% daily active players.</p>
     <div class="a" style="--i:4;display:flex;gap:28px;align-items:center;flex-wrap:wrap">
       <div class="who"><b>Aditya Firoda</b>ISB PGP · PM / APM case</div>
-      <div class="links">
-        <a class="btn" href="https://gameberry-submission.vercel.app/play/">Play the prototype →</a>
-        <a class="btn alt" href="https://gameberry-submission.vercel.app/model/Block_Battle_DAU_Model.xlsx">Impact model</a>
-      </div>
     </div>
   </div>
   <div class="phone a" style="--i:2">
@@ -246,7 +247,7 @@ body.flow .vs{right:-8px}
     <span class="pill p-peach vs">1 player. Always.</span>
     <span class="pill p-mint tag">The real game, from my own 10-minute run</span>
   </div>
-  <div class="hint screen-only"><kbd>↓</kbd> scroll, swipe or use arrow keys</div>
+  <div class="hint screen-only"><kbd>↓</kbd> scroll, swipe or use arrow keys · sound plays after your first click or key press</div>
 </section>
 
 <!-- ============ 1 · WHY 1010! ============ -->
@@ -330,7 +331,6 @@ body.flow .vs{right:-8px}
       <div class="gifbox">
         <img class="screen-only" src="assets/block_battle_steps.gif" alt="Animated walkthrough: a double clear sends a junk row with one gap to the opponent's board">
         <img class="print-only" src="assets/block_battle_steps_poster.png" alt="Block Battle walkthrough still">
-        <a class="btn" href="https://gameberry-submission.vercel.app/play/">Play it vs a bot →</a>
       </div>
       <div class="rules">
         <div><b>Same rules</b>10×10, three pieces, rows and columns clear.</div>
@@ -410,8 +410,8 @@ body.flow .vs{right:-8px}
       <h3 style="margin:6px 0 0">Risks</h3>
       <p class="small"><b style="color:var(--ink)">Losing streaks</b> → skill matchmaking and a bot fallback. <b style="color:var(--ink)">Real-time cost</b> → ship async first. <b style="color:var(--ink)">Fewer ad views per session</b> → watch revenue per DAU, not per session.</p>
       <div class="links" style="margin-top:auto">
-        <a class="btn" href="https://gameberry-submission.vercel.app/play/" style="padding:9px 13px;font-size:13px">Play it →</a>
-        <a class="btn alt" href="https://gameberry-submission.vercel.app/model/Block_Battle_DAU_Model.xlsx" style="padding:9px 13px;font-size:13px">Impact model</a>
+        <a class="btn" href="https://gameberry-submission.vercel.app/play/">Play the prototype →</a>
+        <a class="btn alt" href="https://gameberry-submission.vercel.app/model/Block_Battle_DAU_Model.xlsx">Impact model</a>
       </div>
     </div>
   </div>
@@ -421,12 +421,44 @@ body.flow .vs{right:-8px}
 </div>
 </main>
 <nav class="nav" id="nav" aria-label="Slides"></nav>
+<button class="snd" id="snd" type="button" aria-pressed="true">Sound on</button>
 
 <script>
 (function(){
   var slides=[].slice.call(document.querySelectorAll('.slide'));
   var stage=document.getElementById('stage'), nav=document.getElementById('nav');
-  var cur=-1, lock=0, flow=false;
+  var cur=-1, lock=0, flow=false, first=true;
+  /* ---- soft sound: a whoosh between slides, a light note per element as it appears ---- */
+  var AC=window.AudioContext||window.webkitAudioContext, ctx=null, soundOn=true, timers=[];
+  var sndBtn=document.getElementById('snd');
+  function unlock(){ if(!AC) return; if(!ctx){ try{ctx=new AC()}catch(e){return} } if(ctx.state==='suspended') ctx.resume(); }
+  ['pointerdown','keydown','touchstart'].forEach(function(ev){addEventListener(ev,unlock,{passive:true})});
+  sndBtn.onclick=function(e){ e.stopPropagation(); soundOn=!soundOn; sndBtn.setAttribute('aria-pressed',soundOn); sndBtn.textContent=soundOn?'Sound on':'Sound off'; if(soundOn){unlock();note(784,0,.05)} };
+  function ok(){ return soundOn && ctx && ctx.state==='running' && !flow; }
+  function note(f,delay,vol){
+    if(!ok()) return; var t=ctx.currentTime+(delay||0);
+    var o=ctx.createOscillator(), g=ctx.createGain(); o.type='sine'; o.frequency.setValueAtTime(f,t);
+    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol||.045,t+.012); g.gain.exponentialRampToValueAtTime(.0001,t+.32);
+    o.connect(g).connect(ctx.destination); o.start(t); o.stop(t+.35);
+  }
+  function whoosh(){
+    if(!ok()) return; var t=ctx.currentTime, n=ctx.sampleRate*.45, buf=ctx.createBuffer(1,n,ctx.sampleRate), d=buf.getChannelData(0);
+    for(var k=0;k<n;k++) d[k]=(Math.random()*2-1)*(1-k/n);
+    var src=ctx.createBufferSource(), bp=ctx.createBiquadFilter(), g=ctx.createGain(); src.buffer=buf;
+    bp.type='bandpass'; bp.Q.value=1.2; bp.frequency.setValueAtTime(500,t); bp.frequency.exponentialRampToValueAtTime(2200,t+.35);
+    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.07,t+.08); g.gain.exponentialRampToValueAtTime(.0001,t+.45);
+    src.connect(bp).connect(g).connect(ctx.destination); src.start(t);
+  }
+  var SCALE=[523.25,587.33,659.25,783.99,880,1046.5];
+  function reveal(sl){
+    timers.forEach(clearTimeout); timers=[];
+    var seen={};
+    [].forEach.call(sl.querySelectorAll('.a'),function(el){
+      var i=parseInt(getComputedStyle(el).getPropertyValue('--i'))||0;
+      if(seen[i]) return; seen[i]=1;
+      timers.push(setTimeout(function(){note(SCALE[i%SCALE.length],0,.04)}, i*260+180));
+    });
+  }
   var names=slides.map(function(s){return s.id});
   slides.forEach(function(s,i){
     var b=document.createElement('button'); b.setAttribute('aria-label','Slide '+(i+1));
@@ -439,15 +471,17 @@ body.flow .vs{right:-8px}
     var k=Math.min((innerWidth-64)/1280,(innerHeight-48)/720);
     stage.style.transform='scale('+Math.max(k,.3)+')';
     if(cur<0) cur=0;
-    slides.forEach(function(s,i){s.classList.toggle('on',i===cur)});
+    slides.forEach(function(s,i){s.classList.toggle('on',i===cur);s.classList.toggle('before',i<cur)});
   }
   function go(i){
     if(flow) { slides[i].scrollIntoView({behavior:'smooth'}); return; }
     i=Math.max(0,Math.min(slides.length-1,i));
     if(i===cur) return;
     cur=i;
-    slides.forEach(function(s,j){s.classList.toggle('on',j===i)});
+    slides.forEach(function(s,j){s.classList.toggle('on',j===i);s.classList.toggle('before',j<i)});
     [].forEach.call(nav.children,function(b,j){b.classList.toggle('on',j===i)});
+    if(!first) whoosh(); first=false;
+    reveal(slides[i]);
     try{history.replaceState(null,'','#'+names[i])}catch(e){}
   }
   function step(d){ var now=Date.now(); if(now<lock) return; lock=now+700; go(cur+d); }
