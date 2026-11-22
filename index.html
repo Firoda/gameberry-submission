@@ -222,13 +222,85 @@ body.flow .vs{right:-8px}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 @media (prefers-reduced-motion:reduce){.a,.bar i,.sc .t i,.slide{transition:none!important}}
+
+/* ---------- v2: tracker, ask, equation, lenses ---------- */
+.track{list-style:none;margin:0;padding:0;display:flex;gap:6px;flex-wrap:wrap}
+.track li{font:600 11px/1 var(--body);letter-spacing:.04em;padding:6px 10px;border-radius:999px;background:var(--paper);color:var(--ink3)}
+.track li.done{background:var(--mint-bg);color:var(--mint-ink)}
+.track li.done::before{content:"✓ ";}
+.track li.now{background:var(--ink);color:#fff}
+.s0 h1{font-size:56px}
+.s0 .cheek{font-size:18px}
+.ask{background:var(--paper);border-radius:14px;padding:14px 18px;display:flex;flex-direction:column;gap:7px;max-width:620px}
+.ask .askh{font:600 11px var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--ink3)}
+.ask div:not(.askh){display:grid;grid-template-columns:104px 1fr;gap:10px;font-size:14px;line-height:1.4}
+.ask b{color:var(--ink)} .ask span{color:var(--ink2)}
+.g2u{display:grid;grid-template-columns:1fr 470px;gap:20px;flex:1;min-height:0}
+.ctx{display:flex;flex-direction:column;gap:6px;background:var(--paper);border-radius:12px;padding:12px 16px}
+.ctx span{font-size:13px;color:var(--ink2);line-height:1.4}
+.ctx b{display:inline-block;min-width:86px;color:var(--ink);font-weight:600}
+.segs{display:flex;flex-direction:column;gap:8px}
+.seg2{border:1.5px solid var(--line);border-radius:12px;padding:11px 14px;display:flex;flex-direction:column;gap:4px}
+.seg2.t{border-color:var(--mint)}
+.seg2 .top{display:flex;justify-content:space-between;align-items:center}
+.seg2 b{font-size:14px}
+.seg2 p{font-size:12.5px;line-height:1.45;color:var(--ink2)}
+.seg2 i{font-style:normal;color:var(--ink);font-weight:600}
+.eqcard{gap:14px}
+.eq{display:flex;flex-direction:column;align-items:center;gap:22px;position:relative;padding:4px 0}
+.eqtop{font:700 18px var(--head);background:var(--ink);color:#fff;border-radius:10px;padding:8px 18px;position:relative}
+.eqtop::after{content:"";position:absolute;left:50%;top:100%;height:22px;border-left:2px solid var(--line)}
+.eqrow{display:grid;grid-template-columns:1fr 14px 1fr 14px 1fr;align-items:stretch;gap:4px;width:100%}
+.eqplus{display:flex;align-items:center;justify-content:center;font:700 16px var(--head);color:var(--ink3)}
+.eqb{border-radius:10px;padding:10px 8px;text-align:center;font-size:11.5px;color:var(--ink2);line-height:1.3;display:flex;flex-direction:column;gap:3px}
+.eqb b{font:600 14px var(--head);color:var(--ink)}
+.eqb.nw{background:var(--sky-bg)} .eqb.rg{background:var(--mint-bg)} .eqb.oo{background:var(--butter-bg)}
+.eqnote{display:flex;gap:12px;align-items:center;border-top:1px solid var(--line);padding-top:12px}
+.eqnote .big{font-size:30px;color:var(--mint-ink);white-space:nowrap}
+.eqnote span:last-child{font-size:13px;color:var(--ink2);line-height:1.4}
+.lenses{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;flex:1;min-height:0}
+.lh{display:flex;gap:8px;align-items:center;font:600 15px var(--head)}
+.lh em{font:700 12px var(--body);font-style:normal;width:22px;height:22px;border-radius:7px;display:flex;align-items:center;justify-content:center;background:var(--lilac-bg);color:var(--lilac-ink)}
+.stmt{font-size:15px;line-height:1.4;color:var(--ink)}
+.stmt .big{display:block;color:var(--mint-ink);margin-bottom:4px}
+.lenses .bar{grid-template-columns:86px 1fr 28px}
+.lenses .strip{width:100%}
+.loop{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;margin:4px 0}
+.loop span{background:#fff;border-radius:8px;padding:6px 9px;color:var(--ink)}
+.loop span.x{background:var(--peach-bg);color:var(--peach-ink);font-weight:600}
+.loop i{font-style:normal;color:var(--ink3)}
+.whyhere,.moment{background:var(--mint-bg);border-radius:14px;padding:14px 20px;display:flex;gap:18px;align-items:center}
+.whyhere .wl,.moment .wl{font:600 11px var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--mint-ink);white-space:nowrap}
+.whyhere p{font-size:14.5px;line-height:1.45;color:var(--ink2)} .whyhere b{color:var(--ink)}
+.moment{flex-direction:column;align-items:flex-start;gap:6px;background:var(--butter-bg);padding:12px 16px}
+.moment .wl{color:var(--butter-ink)}
+.moment p{font-size:13px;line-height:1.45;color:var(--ink2)} .moment b{color:var(--ink)}
+table.lev td{padding:7px 6px}
+table.lev td.c{font-size:12.5px;font-weight:600}
+table.lev th:first-child{width:440px}
+.nxt{padding:8px 6px 10px}
+.nxt b{color:var(--ink)}
+.g3c{display:grid;grid-template-columns:470px 1fr;gap:24px;flex:1;min-height:0}
+.need{display:flex;gap:12px;align-items:center}
+.need .big{font-size:24px;color:var(--mint-ink);min-width:74px}
+.need > span:last-child{font-size:12.5px;line-height:1.4;color:var(--ink2)}
+.kill{background:var(--peach-bg);border-radius:10px;padding:10px 12px;font-size:12.5px;line-height:1.4;color:var(--ink)}
+.kill b{display:block;font:600 11px var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--peach-ink);margin-bottom:3px}
+table.as.wrap td:nth-child(2){white-space:normal;text-align:left;font-weight:500;padding-left:12px}
+.chain{background:var(--mint-bg);border-radius:12px;padding:11px 14px;font-size:13px;line-height:1.45;color:var(--ink2)}
+.chain b{display:block;font:600 11px var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--mint-ink);margin-bottom:3px}
+.g3c .gifbox{max-width:440px}
+.close{font:500 13.5px/1.45 var(--head);color:var(--ink)}
+body.flow .g2u,body.flow .lenses,body.flow .g3c{display:flex;flex-direction:column}
+body.flow table.lev{min-width:620px}
+body.flow .whyhere{flex-direction:column;align-items:flex-start}
 </style>
 </head>
 <body>
 <main class="deck" id="deck">
 <div class="stage" id="stage">
 
-<!-- ============ 0 · INTRO ============ -->
+<!-- ============ 0 · INTRO: THE ASK ============ -->
 <section class="slide s0" id="intro" aria-label="Intro">
   <div class="left">
     <div class="kick a" style="--i:0">
@@ -236,11 +308,14 @@ body.flow .vs{right:-8px}
       A PM case for Gameberry Labs
     </div>
     <h1 class="a" style="--i:1">1010! has been playing<br>alone since 2014.<br><span>Let's fix that.</span></h1>
-    <p class="cheek a" style="--i:2">1010! is Tetris that stopped falling. You drop three blocks on a 10×10 board, fill a row or column, and it clears. It is calm, endless and the original of the hottest genre in mobile. The only opponent it has ever given you is <em>your own high score</em>.</p>
-    <p class="lead a" style="--i:3">This deck proposes <b style="color:var(--ink)">Block Battle</b>: a 2-minute head-to-head mode where your clears land on your rival's board. The goal is +10% daily active players.</p>
-    <div class="a" style="--i:4;display:flex;gap:28px;align-items:center;flex-wrap:wrap">
-      <div class="who"><b>Aditya Firoda</b>ISB PGP · PM / APM case</div>
+    <p class="cheek a" style="--i:2">1010! is Tetris that stopped falling. You drop three blocks on a 10×10 board, fill a row or column, and it clears. It's calm and endless, and the only opponent it has ever given you is <em>your own high score</em>.</p>
+    <div class="ask a" style="--i:3">
+      <div class="askh">The ask</div>
+      <div><b>Goal</b><span>Grow daily active players (DAU) by 10%.</span></div>
+      <div><b>Off the table</b><span>Ads, paid marketing, deals, subscriptions.</span></div>
+      <div><b>So</b><span>1010! is a mature game: improve the game its players already have, not find new markets.</span></div>
     </div>
+    <div class="who a" style="--i:4"><b>Aditya Firoda</b>ISB PGP · PM / APM case</div>
   </div>
   <div class="phone a" style="--i:2">
     <img src="assets/real_1010_gameplay.gif" alt="Real 1010! gameplay: pieces dropped onto a 10 by 10 board, rows clearing">
@@ -250,172 +325,166 @@ body.flow .vs{right:-8px}
   <div class="hint screen-only"><kbd>↓</kbd> scroll, swipe or use arrow keys · sound plays after your first click or key press</div>
 </section>
 
-<!-- ============ 1 · WHY 1010! ============ -->
-<section class="slide" id="why" aria-label="Why 1010!">
-  <div class="kick a" style="--i:0"><b style="background:var(--peach)">1</b>Why 1010!, and where its daily players leak</div>
-  <h2 class="a" style="--i:0">The original of mobile's #1 genre, losing the players who made it a daily habit.</h2>
-  <div class="g3">
-    <div class="card a" style="--i:1">
-      <h3>A booming genre, an ageing incumbent</h3>
-      <div class="statrow">
-        <div class="stat"><div class="big">#1</div><span>Block Blast!, a 2022 copy of the format, was the most-downloaded game worldwide in 2025 (AppMagic) and in Q1 2026 (Sensor Tower).</span></div>
-        <div class="stat"><div class="big">10M+</div><span>1010! installs on Google Play; 4.27★ from 23.6K US App Store ratings.</span></div>
-        <div class="stat"><div class="big">2014</div><span>Launched by Gram Games (now Zynga). Still updated: v71.59 on 21 Nov 2026.</span></div>
+<!-- ============ 1 · USERS → EQUATION ============ -->
+<section class="slide" id="users" aria-label="Users and the DAU equation">
+  <ol class="track a" style="--i:0"><li class="done">Clarify</li><li class="now">Users</li><li class="now">Equation</li><li>Constraint</li><li>Levers</li><li>Bet</li><li>Prove</li></ol>
+  <h2 class="a" style="--i:0">Who plays 1010!, and where does its daily play come from?</h2>
+  <div class="g2u">
+    <div class="col">
+      <div class="ctx a" style="--i:1">
+        <span><b>Earns from</b> ads and in-app purchases</span>
+        <span><b>Stage</b> launched 2014, still updated</span>
+        <span><b>Rival</b> its genre's leader, Block Blast!, was 2025's most-downloaded mobile game</span>
       </div>
-      <p class="tiny" style="margin-top:auto">Players still want this game. The open question is whether 1010! keeps the ones it has.</p>
+      <div class="segs">
+        <div class="seg2 t a" style="--i:2"><div class="top"><b>Score competitors</b><span class="pill p-mint">Target</span></div><p><i>Play to</i> beat a high score. <i>Pain:</i> a score means little when nobody else sees it, and power-ups cheapen it.</p></div>
+        <div class="seg2 a" style="--i:3"><div class="top"><b>Veterans</b><span class="pill p-butter">Protect</span></div><p><i>Play to</i> unwind, often daily for years. <i>Pain:</i> new pop-ups and modes break the calm game.</p></div>
+        <div class="seg2 a" style="--i:4"><div class="top"><b>New casual players</b><span class="pill p-sky">Already served</span></div><p><i>Play to</i> pass levels; arrive from the Block Blast wave. <i>Served by</i> Adventure Mode.</p></div>
+      </div>
+      <div class="chain a" style="--i:5"><b>Target → pain</b>Score competitors want a score that means something, but nothing in 1010! ever puts their score up against another person.</div>
+    </div>
+    <div class="card eqcard a" style="--i:5">
+      <h3>The DAU equation</h3>
+      <div class="eq">
+        <div class="eqtop">DAU today</div>
+        <div class="eqrow">
+          <div class="eqb nw"><b>New</b>first day ever</div>
+          <div class="eqplus">+</div>
+          <div class="eqb rg"><b>Regulars</b>also played yesterday</div>
+          <div class="eqplus">+</div>
+          <div class="eqb oo"><b>On-and-off</b>back after skipping</div>
+        </div>
+      </div>
+      <p class="eqnote"><span class="big">9 in 10+</span><span>of a 12-year-old game's daily players have played before.</span></p>
+      <p class="small">So DAU grows mainly by <b style="color:var(--ink)">bringing players back</b>, not by adding new ones. Both returning groups depend on one thing: whether today's players come back tomorrow.</p>
+    </div>
+  </div>
+  <div class="foot"><span class="src">Segments from App Store reviews and my own play; their sizes are not public. "9 in 10" comes from my model (Sheet), an assumption for an old game. Block Blast ranking: AppMagic via PocketGamer.biz.</span><span>1 / 4</span></div>
+</section>
+
+<!-- ============ 2 · CONSTRAINT ============ -->
+<section class="slide" id="constraint" aria-label="Find the constraint">
+  <ol class="track a" style="--i:0"><li class="done">Clarify</li><li class="done">Users</li><li class="done">Equation</li><li class="now">Constraint</li><li>Levers</li><li>Bet</li><li>Prove</li></ol>
+  <h2 class="a" style="--i:0">Where is DAU stuck? Four lenses point at the same leak.</h2>
+  <div class="lenses">
+    <div class="card a" style="--i:1">
+      <div class="lh"><em>1</em>Data</div>
+      <p class="stmt"><span class="big">1 pt</span> more next-day return is worth as much as <b>~50% more new players</b>.</p>
+      <p class="small">New players are a sliver of DAU, and buying more is off the table.</p>
     </div>
     <div class="card a" style="--i:2">
-      <h3>What I saw playing it: losing is a dead end</h3>
-      <img class="strip" src="assets/real_1010_gameover.jpg" alt="1010! game over: a Revive countdown, then an ad loading, then a playable ad for another game">
-      <div class="steps3"><span>Game over → “Revive” (watch an ad)</span><span>Ad loads</span><span>A playable ad for another game</span></div>
-      <p class="small">One 10.5-minute run (score 1,139): no other person at any point, and the end led to an ad, not a reason to play again.</p>
+      <div class="lh"><em>2</em>Players</div>
+      <div class="bars" role="img" aria-label="Themes in the 628 most recent App Store reviews">
+        <div class="bar" style="--i:2"><span>Freezes</span><div class="t"><i style="width:100%"></i></div><b>⅓</b></div>
+        <div class="bar" style="--i:2"><span>Ads</span><div class="t"><i style="width:97%"></i></div><b>⅓</b></div>
+        <div class="bar" style="--i:2"><span>Social, rivals</span><div class="t"><i class="cool" style="width:2%"></i></div><b>~0</b></div>
+      </div>
+      <p class="small">Freezes need fixing, but that's hygiene. Ads are off the table. Nobody asks for rivals.</p>
     </div>
     <div class="card a" style="--i:3">
-      <h3>What players write</h3>
-      <div class="bars" role="img" aria-label="Share of 628 recent App Store reviews by theme">
-        <div class="bar" style="--i:3" title="212 of 628 reviews"><span>Freezes / crashes</span><div class="t"><i style="width:100%"></i></div><b>34%</b></div>
-        <div class="bar" style="--i:3" title="209 of 628 reviews"><span>Ads</span><div class="t"><i style="width:97%"></i></div><b>33%</b></div>
-        <div class="bar" style="--i:3" title="151 of 628 reviews"><span>“Bring back the old game”</span><div class="t"><i style="width:71%"></i></div><b>24%</b></div>
-        <div class="bar" style="--i:3" title="37 of 628 reviews"><span>Lost score / progress</span><div class="t"><i style="width:18%"></i></div><b>6%</b></div>
-        <div class="bar" style="--i:3" title="8 of 628 reviews"><span>Friends / social</span><div class="t"><i class="cool" style="width:3%"></i></div><b>1%</b></div>
-      </div>
-      <p class="small">The typical writer has played for <b style="color:var(--ink)">7–13 years</b>. Their complaint: the calm, skill-based game is buried under power-ups and pop-ups, so “high scores don't mean anything”.</p>
-      <p class="tiny">Bugs are a fix, not a feature; ads are out of scope. What is left is a core game that gives veterans nothing new to come back for.</p>
+      <div class="lh"><em>3</em>Loops</div>
+      <div class="loop"><span>Play</span><i>→</i><span>Game over</span><i>→</i><span class="x">nothing pulls you back</span></div>
+      <p class="small">No friend sees your score, nobody is waiting for you, nothing is shared. The game has no loop that brings a player back tomorrow.</p>
+    </div>
+    <div class="card a" style="--i:4">
+      <div class="lh"><em>4</em>Playing it</div>
+      <img class="strip" src="assets/real_1010_gameover.jpg" alt="1010! game over: a Revive countdown, then an ad loading, then a playable ad for another game">
+      <p class="small">My 10-minute run: no other player at any point. Game over led to a "Revive" ad, then an ad for another game.</p>
     </div>
   </div>
-  <div class="lever a" style="--i:4">
-    <div class="lbl">For a mature game, the lever is keeping today's players</div>
-    <div class="n"><div class="big">+42%</div><span>DAU from +10% on the share of daily players who return the next day (80% → 88%)</span></div>
-    <div class="n"><div class="big">+0.7%</div><span>DAU from +10% more new players a day: new players are only ~3% of daily players</span></div>
-    <div class="n"><div class="big">82.7%</div><span>next-day return needed to hit +10% DAU through retention alone (from 80%)</span></div>
+  <div class="whyhere a" style="--i:5">
+    <div class="wl">The leak</div>
+    <p><b>Nothing in 1010! gives today's players a reason to come back tomorrow.</b> Players don't ask for rivals, so a social fix is a design bet. That's why slide 4 tests it before it scales.</p>
   </div>
-  <div class="foot"><span class="src">Reviews: 628 App Store reviews since Jun 2025 (US, UK, CA, AU, IN), keyword-tagged; signals, not a survey. Lever figures come from my model on a 100K DAU index, because 1010!'s real DAU is not public.</span><span>1 / 4</span></div>
+  <div class="foot"><span class="src">Data: my model (Sheet). Players: the 628 most recent App Store reviews (US, UK, CA, AU, IN; mostly US), keyword-tagged; signals, not a survey.</span><span>2 / 4</span></div>
 </section>
 
-<!-- ============ 2 · WHO & OPTIONS ============ -->
-<section class="slide" id="options" aria-label="Who and options">
-  <div class="kick a" style="--i:0"><b style="background:var(--butter)">2</b>Who we build for, and what we weighed</div>
-  <h2 class="a" style="--i:0">Veterans don't need more features. They need a reason for today's game to matter.</h2>
-  <div class="g2">
-    <div class="seg">
-      <div class="segrow t a" style="--i:1"><div class="top"><b>Veteran habit players</b><span class="pill p-mint">Target</span></div><span>Years of daily play, for calm. The core of the reviews, and churning now.</span></div>
-      <div class="segrow t a" style="--i:1"><div class="top"><b>Score competitors</b><span class="pill p-mint">Target</span></div><span>Want a skill score that means something. Power-ups broke that.</span></div>
-      <div class="segrow a" style="--i:2"><div class="top"><b>Daily-puzzle completers</b><span class="pill p-sky">Served by daily puzzles</span></div><span>Treat the daily puzzle as an appointment; bugs erase progress.</span></div>
-      <div class="segrow a" style="--i:2"><div class="top"><b>New casual players</b><span class="pill p-lilac">Served by Adventure Mode</span></div><span>Arrive in the Block Blast wave, through goal-based levels.</span></div>
-      <div class="truth a" style="--i:3"><b>Player truth</b>A solo high score stops feeling like a reason to play after the thousandth game. A real person on the other side of the board makes the same calm game matter again, and a loss becomes a rematch rather than an ad.</div>
-    </div>
-    <div class="card a opts-wrap" style="--i:4;background:#fff;padding:0 0 0 4px">
-      <table class="opts">
-        <thead><tr><th style="width:110px">Design lens</th><th>Option</th><th>A reason to come back tomorrow</th><th>Keeps the calm core intact</th><th>Buildable on today's engine</th></tr></thead>
-        <tbody>
-          <tr><td><span class="lens">Depth</span></td><td><span class="nm">Piece preview + hold slot</span>Plan two moves ahead</td><td class="c n">○</td><td class="c y">●</td><td class="c y">●</td></tr>
-          <tr><td><span class="lens">Tension</span></td><td><span class="nm">Pressure mode</span>The board rises on a timer</td><td class="c n">○</td><td class="c n">○</td><td class="c y">●</td></tr>
-          <tr><td><span class="lens">Feel</span></td><td><span class="nm">Music-reactive board</span>Clears play notes and build a track</td><td class="c n">○</td><td class="c y">●</td><td class="c m">◐</td></tr>
-          <tr><td><span class="lens">Session shape</span></td><td><span class="nm">Daily Board</span>One seeded board a day; share your score</td><td class="c m">◐</td><td class="c y">●</td><td class="c y">●</td></tr>
-          <tr><td><span class="lens">Gamification</span></td><td><span class="nm">Streaks, leagues, badges</span>Meta layered on top of play</td><td class="c m">◐</td><td class="c n">○</td><td class="c y">●</td></tr>
-          <tr class="win"><td><span class="lens" style="color:var(--mint-ink)">Other players</span></td><td><span class="nm">Block Battle</span>Your clears land on a rival's board</td><td class="c y">●</td><td class="c y">●</td><td class="c m">◐</td></tr>
-        </tbody>
-      </table>
-      <p class="small" style="padding:10px 6px 0"><span class="verdict">Pick: Block Battle.</span> Only here does another person create the reason to return. Daily Board, the runner-up, becomes its first step (same seed, played async). Gamification is the meta 1010! already added, and reviews push back on it.</p>
-    </div>
+<!-- ============ 3 · LEVERS → BET ============ -->
+<section class="slide" id="bet" aria-label="Levers and the bet">
+  <ol class="track a" style="--i:0"><li class="done">Clarify</li><li class="done">Users</li><li class="done">Equation</li><li class="done">Constraint</li><li class="now">Levers</li><li class="now">Bet</li><li>Prove</li></ol>
+  <h2 class="a" style="--i:0">Three ways to give players a reason to come back. We bet on a rival.</h2>
+  <div class="card a opts-wrap" style="--i:1;background:#fff;padding:0 4px">
+    <table class="opts lev">
+      <thead><tr><th>Idea, for "will they come back tomorrow?"</th><th>Impact</th><th>Confidence</th><th>Effort</th><th>Risk</th><th>Call</th></tr></thead>
+      <tbody>
+        <tr><td><span class="nm">Daily Board, made social</span>1010!'s daily puzzle, but the same for everyone and shareable</td><td class="c m">Med</td><td class="c y">High</td><td class="c y">Low</td><td class="c y">Low</td><td><span class="pill p-sky">Becomes the arena</span></td></tr>
+        <tr><td><span class="nm">Streaks and leagues</span>Solo meta on top of play</td><td class="c n">Low</td><td class="c m">Med</td><td class="c y">Low</td><td class="c m">Med</td><td><span class="pill p-butter">Not now: reviews push back on meta</span></td></tr>
+        <tr class="win"><td><span class="nm">Block Battle</span>A 2-minute duel against a friend's run on today's board</td><td class="c y">High</td><td class="c m">Med</td><td class="c m">Med</td><td class="c m">Med</td><td><span class="pill p-mint">The bet</span></td></tr>
+      </tbody>
+    </table>
+    <p class="small nxt"><b>Next:</b> live 1v1 with matchmaking and a bot fallback. <b>Later:</b> Battle Clubs, where revenue comes in. <b>Not doing:</b> ad changes (off the table); freeze fixes are a must-do, not a growth lever.</p>
   </div>
-  <div class="foot"><span class="src">● strong · ◐ partial · ○ weak. Segments come from review themes and store data; their sizes are not public.</span><span>2 / 4</span></div>
-</section>
-
-<!-- ============ 3 · BLOCK BATTLE ============ -->
-<section class="slide" id="battle" aria-label="Block Battle">
-  <div class="kick a" style="--i:0"><b style="background:var(--mint)">3</b>The feature</div>
-  <h2 class="a" style="--i:0">Block Battle: same 1010!, but your clears become your rival's problem.</h2>
-  <div class="g3b">
-    <div class="a" style="--i:1">
+  <div class="g3c">
+    <div class="a" style="--i:2">
       <div class="gifbox">
         <img class="screen-only" src="assets/block_battle_steps.gif" alt="Animated walkthrough: a double clear sends a junk row with one gap to the opponent's board">
         <img class="print-only" src="assets/block_battle_steps_poster.png" alt="Block Battle walkthrough still">
       </div>
-      <div class="rules">
-        <div><b>Same rules</b>10×10, three pieces, rows and columns clear.</div>
-        <div><b>2+ lines = attack</b>A junk row rises on your rival's board, with one gap.</div>
-        <div><b>Block it</b>Clear fast enough and incoming junk is cancelled.</div>
-        <div><b>2 minutes</b>Top out and you lose; otherwise higher score wins.</div>
-      </div>
     </div>
     <div class="col">
-      <div class="a" style="--i:2">
-        <h3>Why it brings players back</h3>
+      <div class="a" style="--i:3">
+        <h3>How it works</h3>
         <ul class="clean">
-          <li><b>Every clear has a target.</b> A double clear is no longer just points; it is pressure on a person.</li>
-          <li><b>A loss is a rematch, not an ad.</b> The end screen offers “Rematch: get revenge” and “Challenge a friend”.</li>
-          <li><b>Classic stays untouched.</b> Battle is a separate mode with power-ups off, so skill decides.</li>
+          <li><b>Same 1010!</b>, on today's board. Clear 2+ lines at once and a junk row with one gap rises on your rival's board.</li>
+          <li><b>The rival is a friend's recorded run</b>, so their clears hit you when they happened. No live servers needed.</li>
+          <li><b>2 minutes; top out and you lose.</b> Power-ups are off, so skill decides. Classic mode is untouched.</li>
         </ul>
       </div>
-      <div class="a" style="--i:3">
-        <h3>Build it in three steps</h3>
-        <div class="path">
-          <div><em>1</em><p><b>Seeded duel (async).</b> Both players get the same pieces; your recorded clears replay as junk on their board. No servers in real time.</p></div>
-          <div><em>2</em><p><b>Challenge link.</b> “Beat me in Block Battle”; the link opens straight into the match, so it doubles as an invite.</p></div>
-          <div><em>3</em><p><b>Live 1v1</b> with skill-based matchmaking, once step 1 shows people come back for it.</p></div>
-        </div>
+      <div class="moment a" style="--i:4">
+        <div class="wl">One player, one moment</div>
+        <p>Game over at 1,139. Next to "Revive": <b>"Kabir beat today's board. Battle his run?"</b> Two minutes later: <b>"You lost by one row. Revenge tomorrow?"</b></p>
       </div>
-      <div class="gb a" style="--i:4">
-        <h3>Straight from Gameberry's playbook</h3>
-        <p>Ludo STAR's loop is a quick match, a rematch and a friend invite. Gameberry reported that ~95% of its growth was organic, from invites built into the core game, and that 64% of weekly players swapped Lucky Dice with friends (2021). Block Battle puts that same loop inside 1010!.</p>
-      </div>
+      <p class="small a" style="--i:5"><b style="color:var(--ink)">Proof head-to-head works in free casual games:</b> Tetris Battle on Facebook; Match Masters (live 1v1 match-3).</p>
     </div>
   </div>
-  <div class="foot"><span class="src">Send-lines battles are proven in Tetris (Tetris 99) and exist in small block-puzzle apps (e.g. PVP Blocks, Block Clash); no major 10×10 game offers one. Gameberry figures: PocketGamer.biz, Aug 2021, self-reported.</span><span>3 / 4</span></div>
+  <div class="foot"><span class="src">Impact, confidence, effort and risk are my judgement calls. The GIF shows a bot rival.</span><span>3 / 4</span></div>
 </section>
 
-<!-- ============ 4 · IMPACT ============ -->
-<section class="slide" id="impact" aria-label="Impact">
-  <div class="kick a" style="--i:0"><b style="background:var(--lilac)">4</b>Impact and how we'd prove it</div>
-  <h2 class="a" style="--i:0">Base case +9.5% DAU. It clears +10% once 21% of daily players battle.</h2>
+<!-- ============ 4 · PROVE ============ -->
+<section class="slide" id="prove" aria-label="Prove it">
+  <ol class="track a" style="--i:0"><li class="done">Clarify</li><li class="done">Users</li><li class="done">Equation</li><li class="done">Constraint</li><li class="done">Levers</li><li class="done">Bet</li><li class="now">Prove</li></ol>
+  <h2 class="a" style="--i:0">What has to be true for +10%, and how we'd know in 4 weeks.</h2>
   <div class="g4">
     <div class="card a" style="--i:1">
-      <h3>DAU lift by scenario</h3>
-      <div class="scen" role="img" aria-label="DAU lift: low 3.0 percent, base 9.5 percent, high 25.7 percent">
-        <div class="sc" style="--i:1" title="+2,965 daily players per 100K"><span>Low</span><div class="t"><i style="width:11.7%"></i><b style="left:calc(11.7% + 8px)">+3.0%</b></div></div>
-        <div class="sc base" style="--i:1" title="+9,510 daily players per 100K"><span>Base</span><div class="t"><i style="width:37%"></i><b style="left:calc(37% + 8px)">+9.5%</b><span class="target" style="left:38.9%"><small>+10% goal</small></span></div></div>
-        <div class="sc" style="--i:1" title="+25,746 daily players per 100K"><span>High</span><div class="t"><i style="width:100%"></i><b style="left:auto;right:8px;color:#fff">+25.7%</b></div></div>
+      <h3>What has to be true</h3>
+      <div class="need"><span class="big">1 in 5</span><span>daily players battle <span class="typ p-butter">assumption</span></span></div>
+      <div class="need"><span class="big">11%</span><span>more likely to come back next day, half of what Duolingo, the language-learning app, found for friend streaks (22%) <span class="typ p-sky">benchmark ÷ 2</span></span></div>
+      <h3 style="margin:8px 0 0">DAU lift, by how many battle</h3>
+      <div class="scen" role="img" aria-label="DAU lift: 10 percent battle gives 4.5 percent, 20 percent gives 9.5 percent, 30 percent gives 15 percent">
+        <div class="sc" style="--i:1"><span>10%</span><div class="t"><i style="width:30%"></i><b style="left:calc(30% + 8px)">+4.5%</b></div></div>
+        <div class="sc base" style="--i:1"><span>20%</span><div class="t"><i style="width:63.4%"></i><b style="left:calc(63.4% + 8px)">+9.5%</b><span class="target" style="left:66.7%"><small>+10%</small></span></div></div>
+        <div class="sc" style="--i:1"><span>30%</span><div class="t"><i style="width:100%"></i><b style="left:auto;right:8px;color:#fff">+15.0%</b></div></div>
       </div>
-      <h3 style="margin:10px 0 0">Where the base +9.5 points come from</h3>
-      <div class="stack" role="img" aria-label="Base case split: 7.6 points from battlers returning more, 1.5 from rematch and friend nudges, 0.4 from challenge links">
-        <i style="flex:7.6;background:var(--mint-ink)"></i><i style="flex:1.5;background:var(--mint)"></i><i style="flex:.4;background:var(--butter)"></i>
-      </div>
-      <div class="leg">
-        <div><i style="background:var(--mint-ink)"></i>Battlers come back more often<b>+7.6</b></div>
-        <div><i style="background:var(--mint)"></i>Rematch and friend nudges<b>+1.5</b></div>
-        <div><i style="background:var(--butter)"></i>Challenge links bring new players<b>+0.4</b></div>
-      </div>
+      <p class="tiny">Honest range: if regulars return less often today than I assume (75%, not 80%), Base is ~+7%; if more often (85%), ~+14%. The test settles it.</p>
     </div>
     <div class="card a" style="--i:2">
-      <h3>Key assumptions (base)</h3>
-      <table class="as">
-        <tr><td>Daily players who battle<span class="typ p-butter">assumption</span></td><td>20%</td></tr>
-        <tr><td>Battlers' extra next-day return, relative<span class="typ p-sky">benchmark ÷ 2</span></td><td>+11%</td></tr>
-        <tr><td>Next-day return today<span class="typ p-butter">assumption</span></td><td>80%</td></tr>
-        <tr><td>New players a day, per 100K DAU<span class="typ p-butter">assumption</span></td><td>3,000</td></tr>
-        <tr><td>Challenge links per battler a day<span class="typ p-butter">assumption</span></td><td>0.05</td></tr>
+      <h3>The test</h3>
+      <p class="small"><b style="color:var(--ink)">Hypothesis:</b> if score competitors get a friend's run to beat, more of today's players come back tomorrow, because something is finally waiting for them.</p>
+      <table class="as wrap">
+        <tr><td>Setup</td><td>90/10 holdout, 4 weeks; read weeks 3–4</td></tr>
+        <tr><td>Primary</td><td>DAU</td></tr>
+        <tr><td>Leading</td><td>Share of today's players back tomorrow</td></tr>
+        <tr><td>Why it moved</td><td>Battles per battler, revenge rate</td></tr>
+        <tr><td>Guardrails</td><td>Veterans' return in classic, ad revenue per DAU, crashes</td></tr>
       </table>
-      <p class="small">+11% is half of the outside benchmark: Duolingo, the language-learning app, found learners with a friend streak were 22% more likely to do their daily lesson (2024). It is halved because a match is lighter than a shared streak.</p>
-      <p class="tiny" style="margin-top:auto">The % lift does not depend on 1010!'s real size; the model uses a 100K DAU index.</p>
+      <p class="tiny">Battles only match players inside the 90%; challenge links reaching the holdout are tagged and left out.</p>
     </div>
     <div class="card a" style="--i:3">
-      <h3>How we'd prove it</h3>
+      <h3>How it could fail</h3>
       <ul class="clean">
-        <li><b>90/10 holdout for 4 weeks.</b> 10% never see Battle; matches form only inside the 90%, so the pool isn't halved.</li>
-        <li><b>Read next-day return in weeks 3–4,</b> after the novelty fades. The base gap (1.8 pts) is ~3.5× the standard error of a single day's read.</li>
+        <li><b>Novelty fades.</b> Battles spike, then drop. That's why we read weeks 3–4, not week 1.</li>
+        <li><b>Losers quit.</b> Watch return after a loss; match players to similar friends' runs and fall back to a bot.</li>
       </ul>
-      <h3 style="margin:6px 0 0">Guardrails</h3>
-      <p class="small">Classic-mode return rate · ad revenue per DAU · crash rate · match wait time</p>
-      <h3 style="margin:6px 0 0">Risks</h3>
-      <p class="small"><b style="color:var(--ink)">Losing streaks</b> → skill matchmaking and a bot fallback. <b style="color:var(--ink)">Real-time cost</b> → ship async first. <b style="color:var(--ink)">Fewer ad views per session</b> → watch revenue per DAU, not per session.</p>
+      <div class="kill"><b>Kill signal</b>Next-day return up less than 1 point in weeks 3–4: stop and rethink.</div>
+      <p class="small"><b style="color:var(--ink)">Why Gameberry would build it this way:</b> Gameberry credits ~95% of its growth to invites built into the core game (2021). Here, the invite <i>is</i> the match.</p>
+      <p class="close">1010!'s players have nothing to come back for tomorrow. Block Battle turns every game over into a rival and a rematch, and the holdout tells us in 4 weeks.</p>
       <div class="links" style="margin-top:auto">
         <a class="btn" href="https://gameberry-submission.vercel.app/play/">Play the prototype →</a>
         <a class="btn alt" href="https://gameberry-submission.vercel.app/model/Block_Battle_DAU_Model.xlsx">Impact model</a>
       </div>
     </div>
   </div>
-  <div class="foot"><span class="src">Model: DAU = new + current + returning, with current players settling at inflow ÷ (1 − next-day return). Low / High vary adoption (10–30%), lift and invites together. Figures are model outputs, not data.</span><span>4 / 4</span></div>
+  <div class="foot"><span class="src">All lifts come from my model (Sheet, per 100K daily players). Duolingo: blog, "Friend Streak", 2024, observational. Gameberry: PocketGamer.biz, Aug 2021, self-reported. The prototype plays the same match live against a bot.</span><span>4 / 4</span></div>
 </section>
 
 </div>
