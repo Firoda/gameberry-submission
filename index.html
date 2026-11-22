@@ -181,6 +181,9 @@ table.as tr:first-child td{border-top:0}
 .print-only{display:none!important}
 .snd{position:fixed;right:max(16px,env(safe-area-inset-right,0px));top:max(14px,env(safe-area-inset-top,0px));z-index:10;border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font:500 12px var(--body);color:var(--ink2);cursor:pointer}
 .snd[aria-pressed="false"]{color:var(--ink3)}
+.snd.ask{color:var(--mint-ink);border-color:var(--mint);background:var(--mint-bg);animation:sndpulse 1.6s ease-in-out infinite}
+@keyframes sndpulse{50%{box-shadow:0 0 0 6px rgba(93,202,165,.18)}}
+@media (prefers-reduced-motion:reduce){.snd.ask{animation:none}}
 body.flow .snd{display:none}
 
 /* ---------- phone / narrow: slides stack and scroll ---------- */
@@ -322,7 +325,7 @@ body.flow .whyhere{flex-direction:column;align-items:flex-start}
     <span class="pill p-peach vs">1 player. Always.</span>
     <span class="pill p-mint tag">The real game, from my own 10-minute run</span>
   </div>
-  <div class="hint screen-only"><kbd>↓</kbd> scroll, swipe or use arrow keys · sound plays after your first click or key press</div>
+  <div class="hint screen-only"><kbd>↓</kbd> scroll, swipe or use arrow keys · click once for sound</div>
 </section>
 
 <!-- ============ 1 · USERS → EQUATION ============ -->
@@ -490,7 +493,7 @@ body.flow .whyhere{flex-direction:column;align-items:flex-start}
 </div>
 </main>
 <nav class="nav" id="nav" aria-label="Slides"></nav>
-<button class="snd" id="snd" type="button" aria-pressed="true">Sound on</button>
+<button class="snd" id="snd" type="button" aria-pressed="false">Click for sound</button>
 
 <script>
 (function(){
@@ -500,15 +503,23 @@ body.flow .whyhere{flex-direction:column;align-items:flex-start}
   /* ---- soft sound: a whoosh between slides, a light note per element as it appears ---- */
   var AC=window.AudioContext||window.webkitAudioContext, ctx=null, soundOn=true, timers=[];
   var sndBtn=document.getElementById('snd');
-  function unlock(){ if(!AC) return; if(!ctx){ try{ctx=new AC()}catch(e){return} } if(ctx.state==='suspended') ctx.resume(); }
-  ['pointerdown','keydown','touchstart'].forEach(function(ev){addEventListener(ev,unlock,{passive:true})});
-  sndBtn.onclick=function(e){ e.stopPropagation(); soundOn=!soundOn; sndBtn.setAttribute('aria-pressed',soundOn); sndBtn.textContent=soundOn?'Sound on':'Sound off'; if(soundOn){unlock();note(784,0,.05)} };
-  function ok(){ return soundOn && ctx && ctx.state==='running' && !flow; }
+  var out=null;
+  function make(){ if(ctx||!AC) return; try{ ctx=new AC(); out=ctx.createGain(); out.gain.value=2.2; out.connect(ctx.destination); ctx.onstatechange=label; }catch(e){ ctx=null } }
+  function live(){ return ctx && ctx.state==='running'; }
+  function label(){ var on=soundOn&&live(); sndBtn.setAttribute('aria-pressed',on); sndBtn.classList.toggle('ask',soundOn&&!live());
+    sndBtn.textContent=!soundOn?'Sound off':live()?'Sound on':'\uD83D\uDD0A Click for sound'; }
+  function unlock(){ make(); if(ctx&&ctx.state!=='running'){ var p=ctx.resume(); if(p&&p.then) p.then(label,function(){}); } label(); }
+  make(); label();
+  ['pointerdown','mousedown','keydown','touchstart','touchend','click'].forEach(function(ev){addEventListener(ev,unlock,{passive:true,capture:true})});
+  sndBtn.onclick=function(e){ e.stopPropagation();
+    if(soundOn&&!live()){ unlock(); if(ctx) ctx.resume().then(function(){ label(); transit(cur,false); }); return; }
+    soundOn=!soundOn; label(); if(soundOn){ unlock(); note(784,0,.05) } };
+  function ok(){ return soundOn && live() && !flow; }
   function note(f,delay,vol,wave,len){
     if(!ok()) return; var t=ctx.currentTime+(delay||0), L=len||.32;
     var o=ctx.createOscillator(), g=ctx.createGain(); o.type=wave||'sine'; o.frequency.setValueAtTime(f,t);
     g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol||.045,t+.012); g.gain.exponentialRampToValueAtTime(.0001,t+L);
-    o.connect(g).connect(ctx.destination); o.start(t); o.stop(t+L+.03);
+    o.connect(g).connect(out); o.start(t); o.stop(t+L+.03);
   }
   function sweep(f0,f1,len,vol,type,q){
     if(!ok()) return; var t=ctx.currentTime, n=Math.floor(ctx.sampleRate*len), buf=ctx.createBuffer(1,n,ctx.sampleRate), d=buf.getChannelData(0);
@@ -516,7 +527,7 @@ body.flow .whyhere{flex-direction:column;align-items:flex-start}
     var src=ctx.createBufferSource(), bp=ctx.createBiquadFilter(), g=ctx.createGain(); src.buffer=buf;
     bp.type=type||'bandpass'; bp.Q.value=q||1.2; bp.frequency.setValueAtTime(f0,t); bp.frequency.exponentialRampToValueAtTime(f1,t+len*.8);
     g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol||.07,t+.07); g.gain.exponentialRampToValueAtTime(.0001,t+len);
-    src.connect(bp).connect(g).connect(ctx.destination); src.start(t);
+    src.connect(bp).connect(g).connect(out); src.start(t);
   }
   /* one sound palette per slide: its own key, timbre and transition */
   var PAL=[
@@ -565,7 +576,7 @@ body.flow .whyhere{flex-direction:column;align-items:flex-start}
     var back=i<cur; cur=i;
     slides.forEach(function(s,j){s.classList.toggle('on',j===i);s.classList.toggle('before',j<i)});
     [].forEach.call(nav.children,function(b,j){b.classList.toggle('on',j===i)});
-    if(!first) transit(i,back); first=false;
+    if(!first){ if(live()) transit(i,back); else if(ctx&&soundOn){ var ii=i; ctx.resume().then(function(){ if(cur===ii) transit(ii,back) },function(){}) } } first=false;
     reveal(slides[i]);
     try{history.replaceState(null,'','#'+names[i])}catch(e){}
   }
