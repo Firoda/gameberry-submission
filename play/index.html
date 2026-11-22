@@ -129,8 +129,8 @@ body{display:flex;flex-direction:column;align-items:center;overscroll-behavior:n
     <div class="rules">
       <div><em>1</em><span>Drag the 3 pieces onto your board. Fill a row or column to clear it.</span></div>
       <div><em>2</em><span>Clear 2+ lines in one move and a junk row rises on your opponent's board.</span></div>
-      <div><em>3</em><span>Junk headed your way? Clear lines fast to block it before it lands.</span></div>
-      <div><em>4</em><span>Three minutes. Run out of room and you lose; otherwise the higher score wins. Every 200 points earns a round of applause.</span></div>
+      <div><em>3</em><span>Junk headed your way? You get 6 seconds: clear any line to block it.</span></div>
+      <div><em>4</em><span>Three minutes. Junk can't knock you out, only running out of room can. Higher score wins. Every 200 points earns a round of applause.</span></div>
     </div>
     <button class="cta" id="go">Play vs Kabir (bot)</button>
     <p class="note">In the real mode you'd be matched with a friend, a club-mate or a player at your level. A bot fills in when nobody is free.</p>
@@ -155,7 +155,7 @@ body{display:flex;flex-direction:column;align-items:center;overscroll-behavior:n
 <script>
 (function(){
 'use strict';
-var N=10, MATCH=180, DELAY=4;
+var N=10, MATCH=180, DELAY=6, GAP=1.5, GRACE=25, MAXIN=2;
 var SHAPES=[
   [[0,0]],
   [[0,0],[0,1]],[[0,0],[1,0]],
@@ -169,7 +169,8 @@ var SHAPES=[
 ];
 var WEIGHT=[3,3,3,3,3,2,2,1,1,3,1,2,2,2,2,1,1,1,1];
 function pickShape(){var t=0,i;for(i=0;i<WEIGHT.length;i++)t+=WEIGHT[i];var x=Math.random()*t;for(i=0;i<WEIGHT.length;i++){x-=WEIGHT[i];if(x<0)return i}return 0}
-function newPiece(){var s=pickShape();return {cells:SHAPES[s],k:1+Math.floor(Math.random()*6)}}
+function newPiece(small){var s=pickShape();if(small)while(SHAPES[s].length>3)s=pickShape();return {cells:SHAPES[s],k:1+Math.floor(Math.random()*6)}}
+function fullness(g){var f=0;for(var r=0;r<N;r++)for(var c=0;c<N;c++)if(g[r][c])f++;return f/(N*N)}
 function dims(p){var h=0,w=0;p.cells.forEach(function(c){h=Math.max(h,c[0]+1);w=Math.max(w,c[1]+1)});return {h:h,w:w}}
 function empty(){var g=[];for(var r=0;r<N;r++){g.push(new Array(N).fill(0))}return g}
 function fits(g,p,r,c){for(var i=0;i<p.cells.length;i++){var rr=r+p.cells[i][0],cc=c+p.cells[i][1];if(rr<0||cc<0||rr>=N||cc>=N||g[rr][cc])return false}return true}
@@ -181,7 +182,7 @@ function fullLines(g){var rows=[],cols=[],r,c,ok;
   return {rows:rows,cols:cols}}
 function clear(g,L){var cells=[];L.rows.forEach(function(r){for(var c=0;c<N;c++){g[r][c]=0;cells.push(r*N+c)}});L.cols.forEach(function(c){for(var r=0;r<N;r++){g[r][c]=0;cells.push(r*N+c)}});return cells}
 function attackFor(L){var n=L.rows.length+L.cols.length;var a=n>=4?3:n===3?2:n===2?1:0;if(L.rows.length&&L.cols.length)a+=1;return a}
-function addJunk(g){var lost=false;for(var c=0;c<N;c++)if(g[0][c])lost=true;g.shift();var gap=Math.floor(Math.random()*N);var row=new Array(N).fill('j');row[gap]=0;g.push(row);return lost}
+function addJunk(g,soft){var lost=false;for(var c=0;c<N;c++)if(g[0][c])lost=true;if(lost&&soft)return 'saved';g.shift();var gap=Math.floor(Math.random()*N);var row=new Array(N).fill('j');row[gap]=0;g.push(row);return lost}
 
 /* ---------- sound ---------- */
 var AC=null, soundOn=true, master=null;
@@ -227,8 +228,8 @@ function sprinkleCells(idx){var b=boardEl.getBoundingClientRect(),cs=(b.width-6)
   idx.forEach(function(k,i){if(i%2)return;var r=Math.floor(k/N),c=k%N;burst(b.left+3+cs*(c+.5),b.top+3+cs*(r+.5),3,1.2,2.5)})}
 
 /* ---------- state ---------- */
-var me, op, running=false, tLeft=MATCH, endAt=0, raf=0, lastTick=-1;
-function player(){return {g:empty(),tray:[newPiece(),newPiece(),newPiece()],score:0,inc:[],sent:0,blocked:0,lost:false,combo:0,mile:200}}
+var startAt=0, me, op, running=false, tLeft=MATCH, endAt=0, raf=0, lastTick=-1;
+function player(){return {g:empty(),tray:[newPiece(),newPiece(),newPiece()],score:0,inc:[],sent:0,blocked:0,lost:false,combo:0,mile:200,life:1}}
 var boardEl=document.getElementById('board'), miniEl=document.getElementById('mini'), trayEl=document.getElementById('tray');
 var cells=[], mcells=[];
 for(var i=0;i<N*N;i++){var d=document.createElement('div');d.className='c';boardEl.appendChild(d);cells.push(d);var m=document.createElement('div');m.className='c';miniEl.appendChild(m);mcells.push(m)}
@@ -262,7 +263,10 @@ function resolve(P,O,isMe){
     var a=attackFor(L),blocked=0;
     while(a>0&&P.inc.length){P.inc.shift();a--;blocked++}
     P.blocked+=blocked;
-    if(a>0){var at=(performance.now()/1000)+DELAY;for(var k=0;k<a;k++)O.inc.push(at);P.sent+=a}
+    if(a>0){var now=performance.now()/1000;
+      if(!isMe){if(now<startAt+GRACE)a=0;else a=Math.min(1,a,MAXIN-O.inc.length)}
+      var at=Math.max(now+DELAY,O.inc.length?O.inc[O.inc.length-1]+GAP:0);
+      for(var k=0;k<a;k++)O.inc.push(at+k*GAP);P.sent+=Math.max(0,a)}
     P.combo++;
     if(isMe){S.clear(n,P.combo);sprinkleCells(cl);
       if(blocked){toast('Blocked '+blocked+'!');S.block()}
@@ -271,14 +275,15 @@ function resolve(P,O,isMe){
   } else P.combo=0;
   return flash;
 }
-function refill(P){if(P.tray.every(function(x){return !x}))P.tray=[newPiece(),newPiece(),newPiece()]}
+function refill(P){if(P.tray.every(function(x){return !x})){var sm=P===me&&fullness(P.g)>.5;P.tray=[newPiece(sm),newPiece(),newPiece(sm)]}}
+function lifeline(){if(!stuck(me)||!me.life)return false;me.life=0;var i=me.tray.findIndex(function(x){return !x});if(i<0)i=0;me.tray[i]={cells:[[0,0]],k:3};renderTray();toast('Lifeline! A free single block');S.block();return true}
 function stuck(P){return P.tray.every(function(p){return !p||!anyFit(P.g,p)})}
 
 function tryPlace(i,r,c){
   var p=me.tray[i];if(!p||!fits(me.g,p,r,c))return false;
   place(me.g,p,r,c);me.score+=p.cells.length;me.tray[i]=null;S.place();
   var f=resolve(me,op,true);refill(me);renderBoard(f);renderTray();renderScores();renderInc();milestone();
-  if(stuck(me))end('lose','No piece fits on your board.');
+  if(stuck(me)&&!lifeline())end('lose','No piece fits on your board.');
   return true;
 }
 
@@ -319,36 +324,36 @@ function evalMove(g,p,r,c){
   if(n)clear(t,L);
   var touch=0;p.cells.forEach(function(x){var rr=r+x[0],cc=c+x[1];[[1,0],[-1,0],[0,1],[0,-1]].forEach(function(d){var a=rr+d[0],b=cc+d[1];if(a<0||b<0||a>=N||b>=N||(t[a][b]&&!p.cells.some(function(y){return r+y[0]===a&&c+y[1]===b})))touch++})});
   var filled=0;for(var a=0;a<N;a++)for(var b=0;b<N;b++)if(t[a][b])filled++;
-  return n*40+touch*2-filled*0.4+Math.random()*6;
+  return n*40+touch*2-filled*0.4+Math.random()*30;
 }
 function botMove(){
   var best=null;
   op.tray.forEach(function(p,i){if(!p)return;for(var r=0;r<N;r++)for(var c=0;c<N;c++)if(fits(op.g,p,r,c)){var v=evalMove(op.g,p,r,c);if(!best||v>best.v)best={v:v,i:i,r:r,c:c}}});
   if(!best){end('win','Kabir ran out of room.');return}
   var p=op.tray[best.i];place(op.g,p,best.r,best.c);op.score+=p.cells.length;op.tray[best.i]=null;
-  var before=me.inc.length;resolve(op,me,false);if(me.inc.length>before){toast('Junk incoming!',true);S.warn()}
+  var before=me.inc.length;resolve(op,me,false);if(me.inc.length>before){toast('Junk in '+DELAY+'s: clear a line to block!',true);S.warn()}
   refill(op);renderMini();renderScores();renderInc();
   if(stuck(op))end('win','Kabir ran out of room.');
 }
 
 /* ---------- loop ---------- */
 function land(P,isMe){var now=performance.now()/1000,landed=0;
-  while(P.inc.length&&P.inc[0]<=now){P.inc.shift();landed++;if(addJunk(P.g)){P.lost=true}}
-  if(landed){if(isMe){boardEl.classList.remove('rise');void boardEl.offsetWidth;boardEl.classList.add('rise');S.hit();renderBoard();renderTray()}else{miniEl.classList.remove('rise');void miniEl.offsetWidth;miniEl.classList.add('rise');renderMini()}renderInc()}
+  while(P.inc.length&&P.inc[0]<=now){P.inc.shift();var res=addJunk(P.g,isMe);if(res==='saved'){if(isMe){toast('Close call! Junk bounced off');S.block()}continue}landed++;if(res){P.lost=true}}
+  if(landed){if(isMe){boardEl.classList.remove('rise');void boardEl.offsetWidth;boardEl.classList.add('rise');S.hit();renderBoard();if(stuck(me)&&!lifeline()){end('lose','No piece fits on your board.');return landed}renderTray()}else{miniEl.classList.remove('rise');void miniEl.offsetWidth;miniEl.classList.add('rise');renderMini()}renderInc()}
   return landed}
 function loop(ts){
   if(!running)return;
   var now=performance.now()/1000;tLeft=endAt-now;
   var t=Math.max(0,Math.ceil(tLeft)),te=document.getElementById('timer');if(t<=10&&t>0&&t!==lastTick){lastTick=t;S.tick()}te.textContent=Math.floor(t/60)+':'+String(t%60).padStart(2,'0');te.classList.toggle('low',t<=20);
-  land(me,true);land(op,false);
+  land(me,true);if(!running)return;land(op,false);
   if(me.lost){end('lose','Junk pushed your blocks off the top.');return}
   if(op.lost){end('win','Your junk pushed Kabir off the top.');return}
-  if(now>=botNext){botMove();botNext=now+2.1+Math.random()*1.6;if(!running)return}
+  if(now>=botNext){botMove();botNext=now+2.6+Math.random()*1.8+(op.score>me.score+20?1.5:0);if(!running)return}
   if(tLeft<=0){if(me.score>=op.score)end('win','Time! You outscored Kabir.');else end('lose','Time! Kabir outscored you.');return}
   raf=requestAnimationFrame(loop)}
 
 function start(){
-  me=player();op=player();tLeft=MATCH;endAt=performance.now()/1000+MATCH;running=true;botNext=performance.now()/1000+2.6;lastTick=-1;
+  me=player();op=player();tLeft=MATCH;endAt=performance.now()/1000+MATCH;running=true;startAt=performance.now()/1000;botNext=startAt+3;lastTick=-1;
   document.getElementById('start').hidden=true;document.getElementById('end').hidden=true;
   renderBoard();renderMini();renderTray();renderScores();renderInc();
   cancelAnimationFrame(raf);raf=requestAnimationFrame(loop)}

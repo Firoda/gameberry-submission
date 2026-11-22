@@ -5,6 +5,6 @@ A 5-slide web deck (intro + 4) proposing **Block Battle**, a 3-minute head-to-he
 - **Deck:** https://gameberry-submission.vercel.app (scroll, swipe or arrow keys; stacks on phones)
 - **Playable prototype:** https://gameberry-submission.vercel.app/play/ (vs a bot)
 - **PDF copy:** [Block_Battle_Deck.pdf](Block_Battle_Deck.pdf)
-- **Impact model:** [model/Block_Battle_DAU_Model.xlsx](model/Block_Battle_DAU_Model.xlsx)
+- **Impact model:** [Google Sheet](https://docs.google.com/spreadsheets/d/16SRCrAlA5de6-uYYd3BBuVb_wRqT-FgXcB1BPa2WWBc/edit?usp=sharing) (Excel copy: [model/Block_Battle_DAU_Model.xlsx](model/Block_Battle_DAU_Model.xlsx))
 
 Static site, deployed on Vercel from `main`. By Aditya Firoda (ISB PGP).
