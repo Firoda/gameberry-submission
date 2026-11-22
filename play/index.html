@@ -229,7 +229,7 @@ function sprinkleCells(idx){var b=boardEl.getBoundingClientRect(),cs=(b.width-6)
 
 /* ---------- state ---------- */
 var startAt=0, me, op, running=false, tLeft=MATCH, endAt=0, raf=0, lastTick=-1;
-function player(){return {g:empty(),tray:[newPiece(),newPiece(),newPiece()],score:0,inc:[],sent:0,blocked:0,lost:false,combo:0,mile:200,life:1}}
+function player(){return {g:empty(),tray:[newPiece(),newPiece(),newPiece()],score:0,inc:[],sent:0,blocked:0,lost:false,combo:0,mile:200,life:1,counter:0}}
 var boardEl=document.getElementById('board'), miniEl=document.getElementById('mini'), trayEl=document.getElementById('tray');
 var cells=[], mcells=[];
 for(var i=0;i<N*N;i++){var d=document.createElement('div');d.className='c';boardEl.appendChild(d);cells.push(d);var m=document.createElement('div');m.className='c';miniEl.appendChild(m);mcells.push(m)}
@@ -259,7 +259,7 @@ function toast(txt,bad){var t=document.createElement('div');t.className='toast'+
 /* ---------- moves ---------- */
 function resolve(P,O,isMe){
   var L=fullLines(P.g),n=L.rows.length+L.cols.length,flash=null;
-  if(n){var cl=clear(P.g,L);flash={};cl.forEach(function(x){flash[x]=1});P.score+=10*n*(n+1)/2;
+  if(n){var cl=clear(P.g,L);flash={};cl.forEach(function(x){flash[x]=1});P.score+=30*n*(n+1)/2+(P.combo>0?15*P.combo:0);
     var a=attackFor(L),blocked=0;
     while(a>0&&P.inc.length){P.inc.shift();a--;blocked++}
     P.blocked+=blocked;
@@ -281,7 +281,7 @@ function stuck(P){return P.tray.every(function(p){return !p||!anyFit(P.g,p)})}
 
 function tryPlace(i,r,c){
   var p=me.tray[i];if(!p||!fits(me.g,p,r,c))return false;
-  place(me.g,p,r,c);me.score+=p.cells.length;me.tray[i]=null;S.place();
+  place(me.g,p,r,c);me.score+=3*p.cells.length;me.tray[i]=null;S.place();
   var f=resolve(me,op,true);refill(me);renderBoard(f);renderTray();renderScores();renderInc();milestone();
   if(stuck(me)&&!lifeline())end('lose','No piece fits on your board.');
   return true;
@@ -324,21 +324,25 @@ function evalMove(g,p,r,c){
   if(n)clear(t,L);
   var touch=0;p.cells.forEach(function(x){var rr=r+x[0],cc=c+x[1];[[1,0],[-1,0],[0,1],[0,-1]].forEach(function(d){var a=rr+d[0],b=cc+d[1];if(a<0||b<0||a>=N||b>=N||(t[a][b]&&!p.cells.some(function(y){return r+y[0]===a&&c+y[1]===b})))touch++})});
   var filled=0;for(var a=0;a<N;a++)for(var b=0;b<N;b++)if(t[a][b])filled++;
-  return n*40+touch*2-filled*0.4+Math.random()*30;
+  var low=0;p.cells.forEach(function(x){low+=r+x[0]});
+  return n*40+touch*2-filled*0.4+low*0.8+Math.random()*30;
 }
 function botMove(){
   var best=null;
   op.tray.forEach(function(p,i){if(!p)return;for(var r=0;r<N;r++)for(var c=0;c<N;c++)if(fits(op.g,p,r,c)){var v=evalMove(op.g,p,r,c);if(!best||v>best.v)best={v:v,i:i,r:r,c:c}}});
-  if(!best){end('win','Kabir ran out of room.');return}
-  var p=op.tray[best.i];place(op.g,p,best.r,best.c);op.score+=p.cells.length;op.tray[best.i]=null;
-  var before=me.inc.length;resolve(op,me,false);if(me.inc.length>before){toast('Junk in '+DELAY+'s: clear a line to block!',true);S.warn()}
+  if(!best){if(botSave())return botMove();end('win','Kabir ran out of room.');return}
+  var p=op.tray[best.i];place(op.g,p,best.r,best.c);op.score+=3*p.cells.length;op.tray[best.i]=null;
+  var before=me.inc.length;resolve(op,me,false);
+  if(op.counter&&me.inc.length===before&&me.inc.length<MAXIN&&performance.now()/1000>startAt+GRACE){op.counter=0;me.inc.push(Math.max(performance.now()/1000+DELAY,me.inc.length?me.inc[me.inc.length-1]+GAP:0));op.sent++;toast('Kabir hits back! Junk in '+DELAY+'s',true);S.warn();before=me.inc.length}
+  if(me.inc.length>before){toast('Junk in '+DELAY+'s: clear a line to block!',true);S.warn()}
   refill(op);renderMini();renderScores();renderInc();
-  if(stuck(op))end('win','Kabir ran out of room.');
+  if(stuck(op)&&!botSave())end('win','Kabir ran out of room.');
 }
+function botSave(){if(op.life<=0)return false;op.life--;op.tray=[{cells:[[0,0]],k:4},{cells:[[0,0]],k:5},{cells:[[0,0],[0,1]],k:6}];if(stuck(op))return false;return true}
 
 /* ---------- loop ---------- */
 function land(P,isMe){var now=performance.now()/1000,landed=0;
-  while(P.inc.length&&P.inc[0]<=now){P.inc.shift();var res=addJunk(P.g,isMe);if(res==='saved'){if(isMe){toast('Close call! Junk bounced off');S.block()}continue}landed++;if(res){P.lost=true}}
+  while(P.inc.length&&P.inc[0]<=now){P.inc.shift();var res=addJunk(P.g,isMe);if(res==='saved'){if(isMe){toast('Close call! Junk bounced off');S.block()}continue}landed++;if(!isMe)op.counter=1}
   if(landed){if(isMe){boardEl.classList.remove('rise');void boardEl.offsetWidth;boardEl.classList.add('rise');S.hit();renderBoard();if(stuck(me)&&!lifeline()){end('lose','No piece fits on your board.');return landed}renderTray()}else{miniEl.classList.remove('rise');void miniEl.offsetWidth;miniEl.classList.add('rise');renderMini()}renderInc()}
   return landed}
 function loop(ts){
@@ -353,7 +357,7 @@ function loop(ts){
   raf=requestAnimationFrame(loop)}
 
 function start(){
-  me=player();op=player();tLeft=MATCH;endAt=performance.now()/1000+MATCH;running=true;startAt=performance.now()/1000;botNext=startAt+3;lastTick=-1;
+  me=player();op=player();op.life=2;tLeft=MATCH;endAt=performance.now()/1000+MATCH;running=true;startAt=performance.now()/1000;botNext=startAt+3;lastTick=-1;
   document.getElementById('start').hidden=true;document.getElementById('end').hidden=true;
   renderBoard();renderMini();renderTray();renderScores();renderInc();
   cancelAnimationFrame(raf);raf=requestAnimationFrame(loop)}
