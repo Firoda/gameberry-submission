@@ -297,6 +297,25 @@ table.as.wrap td:nth-child(2){white-space:normal;text-align:left;font-weight:500
 body.flow .g2u,body.flow .lenses,body.flow .g3c{display:flex;flex-direction:column}
 body.flow table.lev{min-width:620px}
 body.flow .whyhere{flex-direction:column;align-items:flex-start}
+/* v3: proof lines, goal strip, second loop */
+.chain b.in{display:inline;font:inherit;letter-spacing:0;text-transform:none;color:var(--ink);font-weight:600;margin:0}
+.eqtag{display:block;margin-top:4px;white-space:nowrap;font:600 10px var(--body);font-style:normal;color:var(--mint-ink);background:#fff;border-radius:999px;padding:2px 6px;align-self:center}
+.lenses .card{display:flex;flex-direction:column}
+.proof{margin-top:auto;border-top:1px solid var(--line);padding-top:10px;font-size:11.5px;line-height:1.45;color:var(--ink2)}
+.proof small{display:block;margin-top:4px;font-size:10.5px;font-style:normal;color:var(--ink3)}
+.proof.quote{font-style:italic;color:var(--ink);border-top:0;border-left:3px solid var(--peach);padding:2px 0 2px 10px;margin-top:2px}
+.goal{display:flex;flex-direction:column;gap:2px;background:#fff;border-radius:10px;padding:10px 12px;margin-top:6px}
+.goal span,.goal small{font-size:11px;color:var(--ink3)}
+.goal b{font:700 22px var(--head);color:var(--mint-ink)}
+.goal b i{font-style:normal;color:var(--ink3);margin:0 6px;font-weight:500}
+.loop.good span{background:var(--mint-bg)}
+.loop.good span.who{flex-basis:100%;background:transparent;padding:0;font-weight:600;color:var(--mint-ink)}
+.loop.good span.y{background:var(--mint);color:#fff;font-weight:600}
+table.lev i.why{font-style:normal;color:var(--mint-ink);font-weight:500}
+.exp{color:var(--mint-ink);font-weight:600;white-space:nowrap}
+.target small{white-space:nowrap}
+.lenses .loop.good{margin-top:auto}
+.loop.good + .proof{margin-top:8px}
 </style>
 </head>
 <body>
@@ -337,6 +356,7 @@ body.flow .whyhere{flex-direction:column;align-items:flex-start}
       <div class="ctx a" style="--i:1">
         <span><b>Earns from</b> ads and in-app purchases</span>
         <span><b>Stage</b> launched 2014, still updated</span>
+        <span><b>Size</b> 10M+ Google Play installs · 4.3★ on the App Store</span>
         <span><b>Rival</b> its genre's leader, Block Blast!, was 2025's most-downloaded mobile game</span>
       </div>
       <div class="segs">
@@ -344,7 +364,7 @@ body.flow .whyhere{flex-direction:column;align-items:flex-start}
         <div class="seg2 a" style="--i:3"><div class="top"><b>Veterans</b><span class="pill p-butter">Protect</span></div><p><i>Play to</i> unwind, often daily for years. <i>Pain:</i> new pop-ups and modes break the calm game.</p></div>
         <div class="seg2 a" style="--i:4"><div class="top"><b>New casual players</b><span class="pill p-sky">Already served</span></div><p><i>Play to</i> pass levels; arrive from the Block Blast wave. <i>Served by</i> Adventure Mode.</p></div>
       </div>
-      <div class="chain a" style="--i:5"><b>Target → pain</b>Score competitors want a score that means something, but nothing in 1010! ever puts their score up against another person.</div>
+      <div class="chain a" style="--i:5"><b>Target → pain</b>Score competitors <b class="in">play often and want to compete</b>, but nothing in 1010! ever puts their score up against another person.</div>
     </div>
     <div class="card eqcard a" style="--i:5">
       <h3>The DAU equation</h3>
@@ -353,7 +373,7 @@ body.flow .whyhere{flex-direction:column;align-items:flex-start}
         <div class="eqrow">
           <div class="eqb nw"><b>New</b>first day ever</div>
           <div class="eqplus">+</div>
-          <div class="eqb rg"><b>Regulars</b>also played yesterday</div>
+          <div class="eqb rg"><b>Regulars</b>also played yesterday<em class="eqtag">~80% back next day</em></div>
           <div class="eqplus">+</div>
           <div class="eqb oo"><b>On-and-off</b>back after skipping</div>
         </div>
@@ -362,7 +382,7 @@ body.flow .whyhere{flex-direction:column;align-items:flex-start}
       <p class="small">So DAU grows mainly by <b style="color:var(--ink)">bringing players back</b>, not by adding new ones. Both returning groups depend on one thing: whether today's players come back tomorrow.</p>
     </div>
   </div>
-  <div class="foot"><span class="src">Segments from App Store reviews and my own play; their sizes are not public. "9 in 10" comes from my model (Sheet), an assumption for an old game. Block Blast ranking: AppMagic via PocketGamer.biz.</span><span>1 / 4</span></div>
+  <div class="foot"><span class="src">Segments from App Store reviews and my own play; their sizes are not public. "9 in 10" and "~80%" come from my model (Sheet): assumptions for an old daily game. Installs and rating: Google Play and the US App Store. Block Blast ranking: AppMagic via PocketGamer.biz.</span><span>1 / 4</span></div>
 </section>
 
 <!-- ============ 2 · CONSTRAINT ============ -->
@@ -374,6 +394,8 @@ body.flow .whyhere{flex-direction:column;align-items:flex-start}
       <div class="lh"><em>1</em>Data</div>
       <p class="stmt"><span class="big">1 pt</span> more next-day return is worth as much as <b>~50% more new players</b>.</p>
       <p class="small">New players are a sliver of DAU, and buying more is off the table.</p>
+      <div class="goal"><span>For +10% DAU</span><b>80%<i>→</i>~83%</b><small>regulars back next day</small></div>
+      <p class="proof">Duolingo, the language-learning app, found the same: in its growth model, keeping returning users moved DAU more than any other lever (2023).</p>
     </div>
     <div class="card a" style="--i:2">
       <div class="lh"><em>2</em>Players</div>
@@ -382,12 +404,15 @@ body.flow .whyhere{flex-direction:column;align-items:flex-start}
         <div class="bar" style="--i:2"><span>Ads</span><div class="t"><i style="width:97%"></i></div><b>⅓</b></div>
         <div class="bar" style="--i:2"><span>Social, rivals</span><div class="t"><i class="cool" style="width:2%"></i></div><b>~0</b></div>
       </div>
-      <p class="small">Freezes need fixing, but that's hygiene. Ads are off the table. Nobody asks for rivals.</p>
+      <p class="small">Freezes need fixing, but that's hygiene. Ads are off the table. Few ask for rivals outright, but score competitors feel it:</p>
+      <p class="proof quote">"High scores don't mean anything and you can't compete with people now."<small>UK App Store review</small></p>
     </div>
     <div class="card a" style="--i:3">
       <div class="lh"><em>3</em>Loops</div>
       <div class="loop"><span>Play</span><i>→</i><span>Game over</span><i>→</i><span class="x">nothing pulls you back</span></div>
       <p class="small">No friend sees your score, nobody is waiting for you, nothing is shared. The game has no loop that brings a player back tomorrow.</p>
+      <div class="loop good"><span class="who">Ludo STAR</span><span>Play</span><i>→</i><span>Rematch</span><i>→</i><span class="y">Invite</span></div>
+      <p class="proof">Gameberry's own games already have the loop 1010! is missing.</p>
     </div>
     <div class="card a" style="--i:4">
       <div class="lh"><em>4</em>Playing it</div>
@@ -397,9 +422,9 @@ body.flow .whyhere{flex-direction:column;align-items:flex-start}
   </div>
   <div class="whyhere a" style="--i:5">
     <div class="wl">The leak</div>
-    <p><b>Nothing in 1010! gives today's players a reason to come back tomorrow.</b> Players don't ask for rivals, so a social fix is a design bet. That's why slide 4 tests it before it scales.</p>
+    <p><b>Nothing in 1010! gives today's players a reason to come back tomorrow.</b> Few players ask for rivals, so a social fix is a design bet. That's why slide 4 tests it before it scales.</p>
   </div>
-  <div class="foot"><span class="src">Data: my model (Sheet). Players: the 628 most recent App Store reviews (US, UK, CA, AU, IN; mostly US), keyword-tagged; signals, not a survey.</span><span>2 / 4</span></div>
+  <div class="foot"><span class="src">Data: my model (Sheet); Duolingo: company blog and Lenny's Newsletter, 2023. Players: the 628 most recent App Store reviews (US, UK, CA, AU, IN; mostly US), keyword-tagged; signals, not a survey.</span><span>2 / 4</span></div>
 </section>
 
 <!-- ============ 3 · LEVERS → BET ============ -->
@@ -410,9 +435,9 @@ body.flow .whyhere{flex-direction:column;align-items:flex-start}
     <table class="opts lev">
       <thead><tr><th>Idea, for "will they come back tomorrow?"</th><th>Impact</th><th>Confidence</th><th>Effort</th><th>Risk</th><th>Call</th></tr></thead>
       <tbody>
-        <tr><td><span class="nm">Daily Board, made social</span>1010!'s daily puzzle, but the same for everyone and shareable</td><td class="c m">Med</td><td class="c y">High</td><td class="c y">Low</td><td class="c y">Low</td><td><span class="pill p-sky">Becomes the arena</span></td></tr>
-        <tr><td><span class="nm">Streaks and leagues</span>Solo meta on top of play</td><td class="c n">Low</td><td class="c m">Med</td><td class="c y">Low</td><td class="c m">Med</td><td><span class="pill p-butter">Not now: reviews push back on meta</span></td></tr>
-        <tr class="win"><td><span class="nm">Block Battle</span>A 3-minute duel against a friend's run on today's board</td><td class="c y">High</td><td class="c m">Med</td><td class="c m">Med</td><td class="c m">Med</td><td><span class="pill p-mint">The bet</span></td></tr>
+        <tr><td><span class="nm">Daily Board, made social</span>Everyone gets the same puzzle; <i class="why">come back to compare</i></td><td class="c m">Med</td><td class="c y">High</td><td class="c y">Low</td><td class="c y">Low</td><td><span class="pill p-sky">Becomes the arena</span></td></tr>
+        <tr><td><span class="nm">Streaks and leagues</span>Solo meta; <i class="why">come back so the streak doesn't break</i></td><td class="c n">Low</td><td class="c m">Med</td><td class="c y">Low</td><td class="c m">Med</td><td><span class="pill p-butter">Not now: reviews push back on meta</span></td></tr>
+        <tr class="win"><td><span class="nm">Block Battle</span>A 3-minute duel vs a friend's run; <i class="why">come back for revenge</i></td><td class="c y">High</td><td class="c m">Med</td><td class="c m">Med</td><td class="c m">Med</td><td><span class="pill p-mint">The bet</span></td></tr>
       </tbody>
     </table>
     <p class="small nxt"><b>Next:</b> live 1v1 with matchmaking and a bot fallback. <b>Later:</b> Battle Clubs, where revenue comes in. <b>Not doing:</b> ad changes (off the table); freeze fixes are a must-do, not a growth lever.</p>
@@ -429,7 +454,7 @@ body.flow .whyhere{flex-direction:column;align-items:flex-start}
         <h3>How it works</h3>
         <ul class="clean">
           <li><b>Same 1010!</b>, on today's board. Clear 2+ lines at once and a junk row with one gap rises on your rival's board.</li>
-          <li><b>The rival is a friend's recorded run</b>, so their clears hit you when they happened. No live servers needed.</li>
+          <li><b>The rival is a friend's recorded run</b>, replayed on a board that takes your junk: if their next move no longer fits, they top out. No live servers needed.</li>
           <li><b>3 minutes; top out and you lose.</b> Power-ups are off, so skill decides. Classic mode is untouched.</li>
         </ul>
       </div>
@@ -437,7 +462,7 @@ body.flow .whyhere{flex-direction:column;align-items:flex-start}
         <div class="wl">One player, one moment</div>
         <p>Game over at 1,139. Next to "Revive": <b>"Kabir beat today's board. Battle his run?"</b> Three minutes later: <b>"You lost by one row. Revenge tomorrow?"</b></p>
       </div>
-      <p class="small a" style="--i:5"><b style="color:var(--ink)">Proof head-to-head works in free casual games:</b> Tetris Battle on Facebook; Match Masters (live 1v1 match-3).</p>
+      <p class="small a" style="--i:5"><b style="color:var(--ink)">Precedents:</b> head-to-head in casual games (Tetris Battle, Match Masters) · bots fill empty seats (Ludo STAR) · results as invites (Wordle's share grid) · Clubs (Gameberry).</p>
     </div>
   </div>
   <div class="foot"><span class="src">Impact, confidence, effort and risk are my judgement calls. The GIF shows a bot rival.</span><span>3 / 4</span></div>
@@ -455,7 +480,7 @@ body.flow .whyhere{flex-direction:column;align-items:flex-start}
       <h3 style="margin:8px 0 0">DAU lift, by how many battle</h3>
       <div class="scen" role="img" aria-label="DAU lift: 10 percent battle gives 4.5 percent, 20 percent gives 9.5 percent, 30 percent gives 15 percent">
         <div class="sc" style="--i:1"><span>10%</span><div class="t"><i style="width:30%"></i><b style="left:calc(30% + 8px)">+4.5%</b></div></div>
-        <div class="sc base" style="--i:1"><span>20%</span><div class="t"><i style="width:63.4%"></i><b style="left:calc(63.4% + 8px)">+9.5%</b><span class="target" style="left:66.7%"><small>+10%</small></span></div></div>
+        <div class="sc base" style="--i:1"><span>20%</span><div class="t"><i style="width:63.4%"></i><b style="left:calc(63.4% + 8px)">+9.5%</b><span class="target" style="left:66.7%"><small>+10% once ~21% battle</small></span></div></div>
         <div class="sc" style="--i:1"><span>30%</span><div class="t"><i style="width:100%"></i><b style="left:auto;right:8px;color:#fff">+15.0%</b></div></div>
       </div>
       <p class="tiny">Honest range: if regulars return less often today than I assume (75%, not 80%), Base is ~+7%; if more often (85%), ~+14%. The test settles it.</p>
@@ -466,11 +491,11 @@ body.flow .whyhere{flex-direction:column;align-items:flex-start}
       <table class="as wrap">
         <tr><td>Setup</td><td>90/10 holdout, 4 weeks; read weeks 3–4</td></tr>
         <tr><td>Primary</td><td>DAU</td></tr>
-        <tr><td>Leading</td><td>Share of today's players back tomorrow</td></tr>
+        <tr><td>Leading</td><td>Share of today's players back tomorrow · <span class="exp">expect ~+2 pts</span></td></tr>
         <tr><td>Why it moved</td><td>Battles per battler, revenge rate</td></tr>
         <tr><td>Guardrails</td><td>Veterans' return in classic, ad revenue per DAU, crashes</td></tr>
       </table>
-      <p class="tiny">Battles only match players inside the 90%; challenge links reaching the holdout are tagged and left out.</p>
+      <p class="tiny"><b>Why not 50/50:</b> a split would halve the pool of friends to battle. Battles match only inside the 90%; challenge links that reach the holdout are tagged and left out.</p>
     </div>
     <div class="card a" style="--i:3">
       <h3>How it could fail</h3>
@@ -479,7 +504,7 @@ body.flow .whyhere{flex-direction:column;align-items:flex-start}
         <li><b>Losers quit.</b> Watch return after a loss; match players to similar friends' runs and fall back to a bot.</li>
       </ul>
       <div class="kill"><b>Kill signal</b>Next-day return up less than 1 point in weeks 3–4: stop and rethink.</div>
-      <p class="small"><b style="color:var(--ink)">Why Gameberry would build it this way:</b> Gameberry credits ~95% of its growth to invites built into the core game (2021). Here, the invite <i>is</i> the match.</p>
+      <p class="small"><b style="color:var(--ink)">Gameberry fit:</b> ~95% of its growth was organic, with invites built into the core game (2021). Here, the invite <i>is</i> the match.</p>
       <p class="close">1010!'s players have nothing to come back for tomorrow. Block Battle turns every game over into a rival and a rematch, and the holdout tells us in 4 weeks.</p>
       <div class="links" style="margin-top:auto">
         <a class="btn" href="https://gameberry-submission.vercel.app/play/">Play the prototype →</a>
